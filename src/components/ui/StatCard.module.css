@@ -1,0 +1,47 @@
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: none; /* Flat design */
+}
+
+.top { display: none; } /* Remove top icon bar for cleaner look */
+
+.content { flex: 1; }
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.iconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.trend {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.trendUp { color: var(--success); }
+.trendDown { color: var(--danger); }

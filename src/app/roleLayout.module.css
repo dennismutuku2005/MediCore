@@ -1,0 +1,37 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main {
+  margin-left: var(--sidebar-w);
+  margin-top: var(--topbar-h);
+  padding: 20px;
+  min-height: calc(100vh - var(--topbar-h));
+  background: var(--surface-2);
+  flex: 1;
+  transition: margin-left 0.3s ease;
+}
+
+.activeBlur .main, 
+.activeBlur header {
+  filter: blur(8px);
+  pointer-events: none;
+  transition: filter 0.3s ease;
+}
+
+.fadeIn {
+  animation: fadeIn 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .main {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .main {
+    padding: 16px;
+  }
+}

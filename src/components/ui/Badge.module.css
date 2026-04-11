@@ -1,0 +1,35 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.active { background: var(--success-light); color: #059669; }
+.inactive { background: var(--surface-2); color: var(--text-muted); }
+.pending { background: var(--warning-light); color: #D97706; }
+.confirmed { background: var(--info-light); color: #2563EB; }
+.completed { background: var(--success-light); color: #059669; }
+.cancelled { background: var(--danger-light); color: #DC2626; }
+.stat { background: var(--danger-light); color: #DC2626; }
+.routine { background: var(--info-light); color: #2563EB; }
+.normal { background: var(--success-light); color: #059669; }
+.abnormal { background: var(--warning-light); color: #D97706; }
+.low { background: var(--warning-light); color: #D97706; }
+.critical { background: var(--danger-light); color: #DC2626; }
+.admitted { background: var(--info-light); color: #2563EB; }
+.discharged { background: var(--surface-2); color: var(--text-secondary); }
+.outpatient { background: #F0FDF4; color: #16A34A; }
+.inprogress { background: var(--info-light); color: #2563EB; }
+.paid { background: var(--success-light); color: #059669; }
+.morning { background: #FEF3C7; color: #D97706; }
+.evening { background: #DBEAFE; color: #2563EB; }
+.night { background: #EDE9FE; color: #7C3AED; }
+.high { background: var(--danger-light); color: #DC2626; }
+.medium { background: var(--warning-light); color: #D97706; }
+.inStock { background: var(--success-light); color: #059669; }
+.outOfStock { background: var(--danger-light); color: #DC2626; }
