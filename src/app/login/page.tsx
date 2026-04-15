@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { CrossMedicalIcon, PersonIcon, LockIcon } from '@/components/ui/Icons';
+import Image from 'next/image';
 import { login, setRole } from '@/lib/auth';
 
 export default function Login() {
@@ -35,10 +36,9 @@ export default function Login() {
       <div className="w-full max-w-[400px] bg-white border border-slate-200 rounded p-10 shadow-sm animate-in fade-in zoom-in duration-300">
         <div className="flex flex-col items-center mb-10">
           <div className="flex items-center gap-3 mb-2">
-            <CrossMedicalIcon size={32} color="#2563eb" />
-            <h1 className="text-2xl font-extrabold text-slate-800 tracking-tighter">MediCore</h1>
+            <Image src="/logo.png" alt="MediCore Logo" width={180} height={50} className="object-contain" priority />
           </div>
-          <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Hospital System</p>
+          <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-2">Hospital System</p>
         </div>
         
         <div className="text-center mb-8">

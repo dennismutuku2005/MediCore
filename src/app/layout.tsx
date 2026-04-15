@@ -11,6 +11,9 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: 'MediCore HMS — Hospital Management System',
   description: 'Streamlined care, simplified. A comprehensive hospital management system for healthcare professionals.',
+  icons: {
+    icon: '/logoicon.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

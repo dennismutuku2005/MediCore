@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { getRole, getUsername } from '@/lib/auth';
+import { usePathname } from 'next/navigation';
 import Sidebar from '@/components/layout/Sidebar';
 import Topbar from '@/components/layout/Topbar';
 
@@ -13,6 +14,7 @@ export default function GenericLayout({ children, pageTitle }: LayoutProps) {
   const [role, setRole] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     setRole(getRole());
@@ -25,7 +27,7 @@ export default function GenericLayout({ children, pageTitle }: LayoutProps) {
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar 
         role={role} 
-        currentPath="" 
+        currentPath={pathname} 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)} 
       />
