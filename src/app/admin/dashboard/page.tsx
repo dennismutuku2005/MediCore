@@ -24,20 +24,27 @@ export default function AdminDashboard() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2"><SkeletonLoader height={300} /></div>
-        <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
+        <div className="bg-white border border-slate-200 rounded p-5 space-y-4 shadow-sm">
           <SkeletonLoader height={20} width="60%" />
-          {[1,2,3,4].map(i => <SkeletonLoader key={i} height={40} />)}
+          {[1,2,3,4].map(i => (
+            <div key={i} className="flex gap-3">
+              <SkeletonLoader variant="circular" width={32} height={32} />
+              <div className="flex-1 space-y-2">
+                <SkeletonLoader height={12} width="80%" />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="bg-white border border-slate-200 rounded p-5 space-y-3">
+      <div className="bg-white border border-slate-200 rounded p-5 space-y-3 shadow-sm">
         <SkeletonLoader height={24} width={200} />
-        {[1,2,3,4,5].map(i => <SkeletonLoader key={i} height={42} />)}
+        <SkeletonLoader variant="row" count={5} />
       </div>
     </div>
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard icon={<PersonIcon size={20} />} label="Total Patients" value="1,284" trend="12% vs last month" trendUp />
         <StatCard icon={<CalendarIcon size={20} />} label="Appointments" value={appointments.length} trend="8 pending today" trendUp={false} iconBg="rgba(255, 171, 0, 0.1)" iconColor="#ffab00" />
@@ -46,7 +53,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded p-5">
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded p-5 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-bold text-slate-800">Admissions Overview</h3>
             <span className="text-[11px] font-semibold text-slate-400">LAST 6 MONTHS</span>
@@ -54,7 +61,7 @@ export default function AdminDashboard() {
           <div style={{ height: 200 }}><BarChart data={monthlyAdmissions} /></div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded p-5">
+        <div className="bg-white border border-slate-200 rounded p-5 shadow-sm">
           <h3 className="text-sm font-bold text-slate-800 mb-6">Recent Activity</h3>
           <div className="space-y-4">
             {[
@@ -76,22 +83,24 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-sm font-bold text-slate-800">Department Summary</h3>
           <Badge status="active">LIVE</Badge>
         </div>
-        <Table headers={['Patient Name', 'Doctor', 'Department', 'Status', 'Time']}>
-          {appointments.slice(0, 5).map(app => (
-            <tr key={app.id} className="hover:bg-slate-50 transition-colors">
-              <td className="px-5 py-3 text-sm font-bold text-slate-800">{app.patient}</td>
-              <td className="px-5 py-3 text-sm text-slate-600">{app.doctor}</td>
-              <td className="px-5 py-3 text-sm text-slate-600">{app.department}</td>
-              <td className="px-5 py-3 text-sm"><Badge status={app.status} /></td>
-              <td className="px-5 py-3 text-sm text-slate-400 font-medium">{app.time}</td>
-            </tr>
-          ))}
-        </Table>
+        <div className="overflow-x-auto">
+          <Table headers={['Patient Name', 'Doctor', 'Department', 'Status', 'Time']}>
+            {appointments.slice(0, 5).map(app => (
+              <tr key={app.id} className="hover:bg-slate-50 transition-colors">
+                <td className="px-5 py-3 text-sm font-bold text-slate-800">{app.patient}</td>
+                <td className="px-5 py-3 text-sm text-slate-600">{app.doctor}</td>
+                <td className="px-5 py-3 text-sm text-slate-600">{app.department}</td>
+                <td className="px-5 py-3 text-sm"><Badge status={app.status} /></td>
+                <td className="px-5 py-3 text-sm text-slate-400 font-medium">{app.time}</td>
+              </tr>
+            ))}
+          </Table>
+        </div>
       </div>
     </div>
   );
