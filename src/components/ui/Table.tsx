@@ -14,7 +14,7 @@ interface TableProps {
 
 export default function Table({ headers, children, loading }: TableProps) {
   return (
-    <div className="w-full overflow-x-auto bg-white border border-slate-200 rounded-lg shadow-sm">
+    <div className="w-full overflow-x-auto bg-white border border-slate-200 rounded shadow-sm">
       <table className="w-full text-left border-collapse min-w-[600px]">
         <thead>
           <tr className="bg-slate-50 border-b border-slate-200">

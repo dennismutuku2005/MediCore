@@ -15,7 +15,7 @@ export default function Modal({ open, onClose, title, children, footer }: ModalP
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
-      <div className="relative w-full max-w-[500px] rounded-lg bg-white shadow-2xl flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-[500px] rounded bg-white shadow-xl flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
           <h3 className="text-lg font-bold text-slate-800">{title}</h3>

@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { 
   DashboardIcon, StethoscopeIcon, NurseIcon, PatientsIcon, 
@@ -93,8 +94,8 @@ export default function Sidebar({ role, currentPath, isOpen, onClose }: any) {
       <div className={`fixed inset-0 bg-slate-900/40 z-[999] lg:hidden transition-opacity ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={onClose} />
       
       <aside className={`fixed left-0 top-0 h-screen w-[240px] bg-white border-r border-slate-200 z-[1000] flex flex-col transition-transform lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="h-[64px] flex items-center px-5 gap-2.5 border-b border-slate-200">
-          <CrossMedicalIcon size={24} color="#2563eb" />
+        <div className="h-[64px] flex items-center px-5 gap-3 border-b border-slate-100">
+          <Image src="/logoicon.png" alt="MediCore Logo" width={28} height={28} className="object-contain" />
           <span className="font-bold text-lg text-slate-800 tracking-tight">MediCore</span>
         </div>
 
@@ -108,7 +109,7 @@ export default function Sidebar({ role, currentPath, isOpen, onClose }: any) {
                   return (
                     <Link 
                       key={item.href} href={item.href}
-                      className={`flex items-center gap-3 px-3 py-2 rounded text-sm font-semibold transition-colors ${isActive ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-600 hover:bg-slate-50'}`}
+                      className={`flex items-center gap-3 px-3 py-2 rounded text-sm font-semibold transition-colors ${isActive ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-50'}`}
                       onClick={() => { if (window.innerWidth <= 1024) onClose(); }}
                     >
                       <span className={isActive ? 'text-white' : 'text-slate-400'}>{item.icon}</span>
@@ -124,7 +125,7 @@ export default function Sidebar({ role, currentPath, isOpen, onClose }: any) {
         <div className="p-3 border-t border-slate-200 bg-slate-50">
           <button 
             onClick={() => setShowLogoutConfirm(true)}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded bg-white border border-slate-200 text-sm font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded bg-white border border-slate-200 text-sm font-bold text-rose-600 hover:bg-rose-50 transition-colors shadow-sm"
           >
             <LogoutIcon size={18} />
             Log Out
