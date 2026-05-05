@@ -1,7 +1,7 @@
 # MediCore Clinical Portal
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nextjs/nextjs-original.svg" alt="Next.js" width="200" height="200" />
+  <img src="public/logo.png" alt="MediCore Logo" width="500" />
 </p>
 
 MediCore Portal is a premium clinical interface built with Next.js 14 and TypeScript.
