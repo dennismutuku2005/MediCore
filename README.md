@@ -1,14 +1,20 @@
-# MediCore
+# MediCore Clinical Portal
 
-MediCore is a modern, high-density hospital management system. 
-It features role-based dashboards for Administrators, Doctors, Nurses, Patients, and Lab Technicians.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nextjs/nextjs-original.svg" alt="Next.js" width="200" height="200" />
+</p>
 
-### Features
-* **Tailwind CSS UI**: Completely styled with responsive tailwind utility classes.
-* **Mobile Ready**: Optimized sidebars and tables for flawless smartphone tracking.
-* **Role-Based Portals**: Distinct functionalities grouped by medical staff responsibilities.
-* **Fast & Lightweight**: Built on top of Next.js for maximum performance.
+MediCore Portal is a premium clinical interface built with Next.js 14 and TypeScript.
+It offers a high-performance, responsive experience for doctors, nurses, and administrative staff.
+The UI features real-time telemetry dashboards, interactive ward management, and secure portal access.
+Designed with modern aesthetics, it leverages Tailwind CSS and Sonner for a professional clinical feel.
+This portal bridges the gap between complex medical data and intuitive healthcare management.
 
-### Quick Start
-1. `npm install`
-2. `npm run dev`
+## Key Modules
+- **Admin Suite**: Institutional oversight, staff enrollment, and ward management.
+- **Doctor Portal**: Clinical note taking, prescription management, and lab orders.
+- **Nurse Terminal**: Real-time vitals recording and task coordination.
+- **Laboratory System**: Diagnostic queue processing and inventory tracking.
+
+---
+*Co-authored-by: Dennis Muuo <dennismuuo.dev@gmail.com>*
