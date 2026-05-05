@@ -1,0 +1,215 @@
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.section { margin-bottom: 30px; }
+
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.chartCard {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+}
+
+@media (max-width: 1024px) { .mainGrid { grid-template-columns: 1fr; } }
+
+.activityItem {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--surface-2);
+  display: flex;
+  gap: 12px;
+}
+.activityItem:last-child { border-bottom: none; }
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.splitView { display: flex; gap: 20px; }
+.leftPane { flex: 1; }
+.rightPane { width: 350px; }
+
+@media (max-width: 1200px) {
+  .splitView { flex-direction: column; }
+  .rightPane { width: 100%; }
+}
+
+/* Slide Panel Remake - Flat */
+.slidePanelOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.2);
+  z-index: 1001;
+}
+
+.slidePanel {
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  width: 400px;
+  background: #fff;
+  border-left: 1px solid var(--border);
+  z-index: 1002;
+  box-shadow: -4px 0 10px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.slidePanelHeader {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.detailSection {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--surface-2);
+}
+
+.detailRow {
+  display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px;
+}
+.detailLabel { color: var(--text-muted); }
+.detailValue { color: var(--text-primary); font-weight: 600; }
+
+/* Notes Page Specific Styles */
+.notesLayout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 20px;
+  height: calc(100vh - var(--topbar-h) - 60px);
+}
+
+@media (max-width: 900px) {
+  .notesLayout { grid-template-columns: 1fr; }
+}
+
+.patientList {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-y: auto;
+}
+
+.patientListItem {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--surface-2);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.patientListItem:hover { background: var(--surface-2); }
+
+.patientListItemActive {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.noteEditor {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.noteToolbar {
+  display: flex;
+  gap: 5px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--surface-2);
+  margin-bottom: 10px;
+}
+
+.toolbarBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.noteTextarea {
+  width: 100%;
+  min-height: 120px;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  color: var(--text-primary);
+  resize: vertical;
+}
+
+.savedNotes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.savedNoteItem {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 15px;
+}
+
+.savedNoteHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.savedNotePatient { font-weight: 700; color: var(--text-primary); }
+.savedNoteDate { font-size: 11px; color: var(--text-muted); }
+.savedNotePreview { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+/* Timeline Remake - Clean */
+.timelineItem {
+  border-left: 2px solid var(--border);
+  padding-left: 15px;
+  margin-left: 5px;
+  margin-bottom: 15px;
+}
+.timelineDate { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+.timelineText { font-size: 13px; line-height: 1.5; }
