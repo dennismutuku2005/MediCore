@@ -9,6 +9,7 @@ import { PlusIcon } from '@/components/ui/Icons';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 import { toast } from 'sonner';
+import Combobox from '@/components/ui/Combobox';
 
 export default function NurseTasks() {
   const [loading, setLoading] = useState(true);
@@ -60,20 +61,54 @@ export default function NurseTasks() {
   };
 
   const handleAdd = async () => {
-    if (!form.patientId || !form.description) return;
+    console.log('[NurseTasks] handleAdd triggered. Current form state:', form);
+    console.log('[NurseTasks] Authenticated user:', user);
+
+    if (!form.patientId) {
+      console.warn('[NurseTasks] Validation failed: No patientId');
+      toast.error("Please select a target patient from the registry.");
+      return;
+    }
+    if (!form.description) {
+      console.warn('[NurseTasks] Validation failed: No description');
+      toast.error("Protocol description is required for clinical audit.");
+      return;
+    }
+
     setSaving(true);
     try {
+      const payload = {
+        patientId: form.patientId,
+        description: form.description,
+        dueTime: form.dueTime || null,
+        priority: form.priority,
+        status: 'todo',
+        column: 'todo', // Dual mapping for compatibility
+        nurseId: user?.id
+      };
+      
+      console.log('[NurseTasks] Dispatching API request to /nurse-tasks with payload:', payload);
+      
       const res = await apiFetch('/nurse-tasks', {
         method: 'POST',
-        body: JSON.stringify({ ...form, column: 'todo', assignedNurse: { id: user?.id } })
+        body: JSON.stringify(payload)
       });
-      if (res.status === 'success') {
+      
+      console.log('[NurseTasks] API Response received:', res);
+
+      if (res && res.status === 'success') {
+        toast.success('Clinical protocol committed successfully');
         await fetchData();
         setModalOpen(false);
         setForm({ patientId: '', description: '', dueTime: '', priority: 'Medium' });
+      } else {
+        const errorMsg = res?.message || 'Server rejected the protocol update';
+        console.error('[NurseTasks] Server Error:', errorMsg);
+        toast.error(errorMsg);
       }
     } catch (error) {
-      toast.error("Failed to commit task to protocol.");
+      console.error('[NurseTasks] Fatal error during task commitment:', error);
+      toast.error(`System Error: ${error.message || 'Check your network connection'}`);
     } finally {
       setSaving(false);
     }
@@ -86,15 +121,15 @@ export default function NurseTasks() {
   );
 
   return (
-    <div className="animate-in fade-in duration-500">
-      <div className="flex items-center justify-between mb-8">
+    <div className="animate-in fade-in duration-500 space-y-8">
+      <div className="bg-gradient-to-r from-indigo-600 to-blue-700 text-white rounded-xl p-8 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-xl font-black text-slate-800 tracking-tight">Clinical Task Protocol</h2>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Status management for patient care routines</p>
+          <h2 className="text-2xl font-bold tracking-tight">Clinical Task Protocol</h2>
+          <p className="text-sm font-medium text-blue-100 opacity-80 mt-1">Patient care routines and status synchronization matrix</p>
         </div>
-        <Button onClick={() => setModalOpen(true)} className="h-10 text-[11px] font-black uppercase tracking-widest">
-          <PlusIcon size={14} /> 
-          <span className="ml-2">Add New Task</span>
+        <Button onClick={() => setModalOpen(true)} className="bg-white text-blue-700 hover:bg-blue-50 border-none h-11 px-6 shadow-lg shadow-blue-900/20">
+          <PlusIcon size={18} /> 
+          <span className="ml-2 font-bold">Initialize Protocol</span>
         </Button>
       </div>
 
@@ -148,7 +183,13 @@ export default function NurseTasks() {
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Initialize Clinical Protocol"
         footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Abort interface</Button><Button loading={saving} onClick={handleAdd}>Commit Task</Button></>}>
         <div className="space-y-4 py-2">
-          <Input label="Target Patient Identity" options={patients.map(p => ({ value: p.id, label: p.name }))} value={form.patientId} onChange={e => setForm({...form, patientId: e.target.value})} />
+          <Combobox 
+            label="Target Patient Identity" 
+            placeholder="Search patient..."
+            options={patients.map(p => ({ value: p.id, label: p.name, sublabel: `ID: #${p.id} • ${p.gender}` }))} 
+            value={form.patientId} 
+            onChange={val => setForm({...form, patientId: val})} 
+          />
           <Input label="Protocol Description" isTextarea placeholder="Describe the care routine or medication task..." value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
           <div className="grid grid-cols-2 gap-4">
             <Input label="Temporal Due Time" type="time" value={form.dueTime} onChange={e => setForm({...form, dueTime: e.target.value})} />

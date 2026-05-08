@@ -5,17 +5,18 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SearchInput from '@/components/ui/SearchInput';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { apiFetch } from '@/lib/api';
-import { PlusIcon, EyeIcon, TrashIcon } from '@/components/ui/Icons';
+import { PlusIcon, EyeIcon, TrashIcon, SearchIcon, EyeOffIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
+import Combobox from '@/components/ui/Combobox';
 
 export default function AdminPatients() {
   const [loading, setLoading] = useState(true);
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState<any>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ 
     id: '', 
@@ -37,6 +38,7 @@ export default function AdminPatients() {
   });
 
   const [patientsList, setPatientsList] = useState<any[]>([]);
+  const [search, setSearch] = useState('');
   const [wards, setWards] = useState<any[]>([]);
   const [doctors, setDoctors] = useState<any[]>([]);
 
@@ -160,42 +162,68 @@ export default function AdminPatients() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="w-full sm:w-[350px]">
-          <SearchInput placeholder="Search records by name, ID or insurance..." />
+        <div className="relative w-full sm:w-[380px]">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+            <SearchIcon size={14} />
+          </span>
+          <input
+            className="w-full h-10 pl-10 pr-4 border border-slate-200 rounded text-sm bg-slate-50 focus:bg-white focus:border-blue-600 outline-none transition-all placeholder:text-slate-400"
+            placeholder="Search by name, ID or status..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
         </div>
         <Button onClick={handleOpenAdd} className="h-10">
-          <PlusIcon size={16} /> 
+          <PlusIcon size={16} />
           <span className="ml-1">Register New Patient</span>
         </Button>
       </div>
 
       <div className="bg-white border border-slate-200 rounded shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+          <div>
             <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest text-[11px]">Master Patient Index</h3>
-            <Badge status="info">{patientsList.length} Total Records</Badge>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+              {patientsList.filter(p => (p.name || '').toLowerCase().includes(search.toLowerCase())).length} of {patientsList.length} records
+            </p>
+          </div>
+          <Badge status="info">{patientsList.length} Total</Badge>
         </div>
-        <Table headers={['Accession ID', 'Full Name Identity', 'Genetic Gender', 'Ward Allocation', 'Clinical Status', 'Action']}>
-          {patientsList.map(p => (
+        <Table headers={['', 'Full Name', 'Gender', 'Ward', 'Doctor', 'Status', 'Action']}>
+          {patientsList
+            .filter(p => {
+              const q = search.toLowerCase();
+              return (p.name || '').toLowerCase().includes(q) ||
+                     String(p.id).includes(q) ||
+                     (p.status || '').toLowerCase().includes(q) ||
+                     (p.assignedDoctor?.name || '').toLowerCase().includes(q);
+            })
+            .map(p => (
             <tr key={p.id} className="hover:bg-slate-50 transition-colors cursor-pointer group border-b border-slate-100 last:border-0" onClick={() => setSelectedPatient(p)}>
-              <td className="px-5 py-3 text-sm text-slate-400 font-mono italic">#{p.id}</td>
-              <td className="px-5 py-3 text-sm font-bold text-slate-800 group-hover:text-blue-600">{p.name}</td>
-              <td className="px-5 py-3 text-sm text-slate-600 font-bold">{p.gender}</td>
-              <td className="px-5 py-3 text-sm text-slate-600 font-medium">{p.ward?.name || 'OUTPATIENT'}</td>
-              <td className="px-5 py-3 text-sm text-slate-600 font-medium">{p.assignedDoctor?.name || 'Unassigned'}</td>
-              <td className="px-5 py-3 text-sm"><Badge status={p.status}>{p.status}</Badge></td>
-              <td className="px-5 py-3 text-sm text-right">
-                <div className="flex justify-end">
-                  <button className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all">
-                    <EyeIcon size={16} />
-                  </button>
+              <td className="px-5 py-3">
+                <div className="w-8 h-8 rounded bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 font-black text-xs">
+                  {(p.name || 'P').charAt(0).toUpperCase()}
                 </div>
+              </td>
+              <td className="px-5 py-3 text-sm font-bold text-slate-800 group-hover:text-blue-600">{p.name}</td>
+              <td className="px-5 py-3 text-sm text-slate-600 font-bold">{p.gender || '—'}</td>
+              <td className="px-5 py-3 text-sm text-slate-600 font-medium">{p.ward?.name || 'Outpatient'}</td>
+              <td className="px-5 py-3 text-sm text-slate-500 font-medium">{p.assignedDoctor?.name || '—'}</td>
+              <td className="px-5 py-3"><Badge status={p.status}>{p.status}</Badge></td>
+              <td className="px-5 py-3 text-right">
+                <button
+                  className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all opacity-0 group-hover:opacity-100"
+                  onClick={e => { e.stopPropagation(); setSelectedPatient(p); }}
+                >
+                  <EyeIcon size={14} />
+                </button>
               </td>
             </tr>
           ))}
         </Table>
-        {patientsList.length === 0 && (
+        {patientsList.filter(p => (p.name || '').toLowerCase().includes(search.toLowerCase())).length === 0 && (
           <div className="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">
-            No patient records found in the clinical database.
+            {search ? `No patients matching "${search}"` : 'No patient records found.'}
           </div>
         )}
       </div>
@@ -276,14 +304,15 @@ export default function AdminPatients() {
           <div className="pt-4 border-t border-slate-50">
             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Clinical Placement & Security</h4>
             <div className="grid grid-cols-2 gap-4 mb-4">
-              <Input 
+              <Combobox 
                 label="Ward Allocation" 
+                placeholder="Select Ward..."
                 options={[
                   { value: '', label: 'No Ward Assigned (Outpatient)' },
-                  ...wards.map(w => ({ value: w.id, label: w.name }))
+                  ...wards.map(w => ({ value: w.id, label: w.name, sublabel: `${w.occupied}/${w.totalBeds || w.capacity} Beds` }))
                 ]} 
                 value={form.wardId} 
-                onChange={e => setForm({ ...form, wardId: e.target.value })} 
+                onChange={val => setForm({ ...form, wardId: val })} 
               />
               <Input 
                 label="Clinical Status" 
@@ -297,19 +326,35 @@ export default function AdminPatients() {
               />
             </div>
             <div className="grid grid-cols-2 gap-4 mb-4">
-              <Input 
+              <Combobox 
                 label="Assigned Doctor" 
+                placeholder="Select Physician..."
                 options={[
                   { value: '', label: 'Unassigned' },
-                  ...doctors.map(d => ({ value: d.id, label: d.name }))
+                  ...doctors.map(d => ({ value: d.id, label: d.name, sublabel: d.specialization }))
                 ]} 
                 value={form.doctorId} 
-                onChange={e => setForm({ ...form, doctorId: e.target.value })} 
+                onChange={val => setForm({ ...form, doctorId: val })} 
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <Input label="Portal Identifier (Username)" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} />
-              <Input label="Portal Security Key (Password)" type="password" placeholder={editingPatient ? "Leave blank to preserve" : "Enter temporary key"} value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
+              <Input 
+                label="Portal Security Key (Password)" 
+                type={showPassword ? "text" : "password"} 
+                placeholder={editingPatient ? "Leave blank to preserve" : "Enter temporary key"} 
+                value={form.password} 
+                onChange={e => setForm({ ...form, password: e.target.value })} 
+                suffix={
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="focus:outline-none hover:text-blue-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOffIcon size={14} /> : <EyeIcon size={14} />}
+                  </button>
+                }
+              />
             </div>
           </div>
         </div>

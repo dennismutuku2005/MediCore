@@ -4,7 +4,9 @@ import StatCard from '@/components/ui/StatCard';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
-import { PatientsIcon, CalendarIcon, ClipboardIcon, ActivityIcon } from '@/components/ui/Icons';
+import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
+import { PatientsIcon, CalendarIcon, ClipboardIcon, ActivityIcon, ClockIcon } from '@/components/ui/Icons';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 
@@ -17,6 +19,12 @@ export default function DoctorDashboard() {
     pendingNotes: 0,
     labReviews: 0
   });
+
+  // Patient file modal state
+  const [selectedApp, setSelectedApp] = useState<any>(null);
+  const [patientFile, setPatientFile] = useState<any>(null);
+  const [fileLoading, setFileLoading] = useState(false);
+
   const user = authService.getUser();
 
   useEffect(() => {
@@ -51,6 +59,38 @@ export default function DoctorDashboard() {
     }
     fetchData();
   }, [user?.id]);
+
+  // Open patient file modal and fetch patient + notes
+  const handleAccessFile = async (app: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedApp(app);
+    setPatientFile(null);
+    setFileLoading(true);
+    try {
+      // patient is a nested object: { id, name, ... }
+      const patientId = app.patient?.id || app.patientId;
+      const notesRes = await apiFetch(`/doctor/notes?doctorId=${user?.id || ''}`);
+      const notes = notesRes?.status === 'success' ? (notesRes.data || []) : [];
+
+      // Match notes by nested patient.id
+      const patientNotes = notes.filter(
+        (n: any) => n.patient?.id === patientId
+      );
+
+      // patient object already comes from appointment — use it directly
+      setPatientFile({ patient: app.patient, notes: patientNotes });
+    } catch (err) {
+      console.error('Failed to load patient file:', err);
+      setPatientFile({ patient: null, notes: [] });
+    } finally {
+      setFileLoading(false);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedApp(null);
+    setPatientFile(null);
+  };
 
   if (loading) return (
     <div className="space-y-6">
@@ -87,6 +127,9 @@ export default function DoctorDashboard() {
     </div>
   );
 
+  // patient is a nested object from the API
+  const patientName = selectedApp?.patient?.name || 'Patient';
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -110,7 +153,10 @@ export default function DoctorDashboard() {
                 <td className="px-5 py-3 text-sm text-slate-600 font-normal italic">{app.reason}</td>
                 <td className="px-5 py-3 text-sm"><Badge status={app.status} /></td>
                 <td className="px-5 py-3 text-sm">
-                  <button className="px-3 h-8 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold text-slate-600 uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                  <button
+                    onClick={(e) => handleAccessFile(app, e)}
+                    className="px-3 h-8 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold text-slate-600 uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                  >
                     Access File
                   </button>
                 </td>
@@ -124,6 +170,95 @@ export default function DoctorDashboard() {
           )}
         </div>
       </div>
+
+      {/* Patient File Modal */}
+      <Modal
+        open={!!selectedApp}
+        onClose={closeModal}
+        title={`Clinical File — ${patientName}`}
+        footer={<Button variant="secondary" onClick={closeModal}>Close File</Button>}
+      >
+        {fileLoading ? (
+          <div className="space-y-4 py-4">
+            <SkeletonLoader width="40%" height={20} />
+            <SkeletonLoader height={60} />
+            <SkeletonLoader width="60%" height={16} />
+            <SkeletonLoader height={80} />
+          </div>
+        ) : (
+          <div className="space-y-6 py-2 animate-in fade-in duration-300">
+
+            {/* Appointment Info */}
+            <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-100 rounded">
+              <div className="w-12 h-12 rounded bg-blue-600 flex items-center justify-center text-white font-black text-lg shadow">
+                {patientName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div className="text-base font-black text-slate-900 tracking-tight">{patientName}</div>
+                <div className="flex items-center gap-2 mt-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  <ClockIcon size={12} />
+                  <span>{selectedApp?.time || selectedApp?.appointmentTime || '—'}</span>
+                  <span>•</span>
+                  <span>{selectedApp?.reason || 'No indication recorded'}</span>
+                </div>
+              </div>
+              <div className="ml-auto">
+                <Badge status={selectedApp?.status} />
+              </div>
+            </div>
+
+            {/* Patient Demographics */}
+            {patientFile?.patient ? (
+              <div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-3">Patient Demographics</div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { label: 'Gender', value: patientFile.patient.gender },
+                    { label: 'Blood Type', value: patientFile.patient.bloodType || 'N/A' },
+                    { label: 'Status', value: patientFile.patient.status },
+                    { label: 'Patient ID', value: `#${patientFile.patient.id}` },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="bg-slate-50 p-3 rounded border border-slate-100">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase">{label}</div>
+                      <div className="text-sm font-black text-slate-800 mt-0.5">{value || '—'}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 bg-amber-50 border border-amber-100 rounded text-xs font-bold text-amber-600 uppercase tracking-widest text-center">
+                Patient demographics not found in assigned roster
+              </div>
+            )}
+
+            {/* Clinical Notes */}
+            <div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-3">
+                Clinical Notes ({patientFile?.notes?.length || 0})
+              </div>
+              {patientFile?.notes?.length > 0 ? (
+                <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
+                  {patientFile.notes.map((note: any) => (
+                    <div key={note.id} className="bg-slate-50 border border-slate-100 rounded p-3">
+                      <div className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">
+                        {note.noteDate
+                          ? new Date(note.noteDate).toLocaleDateString()
+                          : new Date(note.createdAt || note.date || Date.now()).toLocaleDateString()
+                        } — Note #{note.id}
+                      </div>
+                      <div className="text-sm text-slate-700 leading-relaxed font-medium">{note.content}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-6 bg-slate-50/60 border border-dashed border-slate-200 rounded text-center text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                  No clinical notes on record for this patient
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

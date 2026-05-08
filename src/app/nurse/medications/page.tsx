@@ -46,14 +46,16 @@ export default function NurseMedications() {
 
   return (
     <div className="animate-in fade-in duration-500">
-      <div className="bg-slate-900 text-white rounded-xl p-6 mb-8 shadow-lg flex items-center justify-between border-b-4 border-blue-600">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl p-8 mb-8 shadow-md flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-black uppercase tracking-widest">Pharmaceutical Administration Protocol</h2>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Authorized Nurse Dispensing Interface</p>
+          <h2 className="text-xl font-bold tracking-tight">Medication Administration Protocol</h2>
+          <p className="text-xs font-medium text-blue-100 opacity-80 mt-1">Authorized Nurse Dispensing Registry — Sector ALPHA-7</p>
         </div>
-        <div className="text-right">
-          <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Sector Status</div>
-          <div className="text-sm font-bold">ALPHA-7 ACTIVE</div>
+        <div className="hidden sm:flex flex-col items-end">
+          <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10">
+            <div className="text-[10px] font-black text-blue-100 uppercase tracking-widest">Protocol Status</div>
+            <div className="text-sm font-bold">READY FOR DISPENSING</div>
+          </div>
         </div>
       </div>
 

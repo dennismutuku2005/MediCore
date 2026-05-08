@@ -7,7 +7,7 @@ import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { apiFetch } from '@/lib/api';
-import { PersonIcon, EditIcon, TrashIcon, PlusIcon, SearchIcon } from '@/components/ui/Icons';
+import { PersonIcon, EditIcon, TrashIcon, PlusIcon, SearchIcon, EyeIcon, EyeOffIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
 
 export default function AdminUsers() {
@@ -16,6 +16,7 @@ export default function AdminUsers() {
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ id: '', name: '', username: '', password: '', email: '', role: 'NURSE', status: 'ACTIVE' });
 
@@ -162,7 +163,22 @@ export default function AdminUsers() {
             <Input label="Role" options={[{value:'ADMIN',label:'Admin'},{value:'DOCTOR',label:'Doctor'},{value:'NURSE',label:'Nurse'},{value:'LABTECH',label:'Lab Tech'},{value:'PATIENT',label:'Patient'}]} value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} />
             <Input label="Status" options={[{value:'ACTIVE',label:'Active'},{value:'INACTIVE',label:'Inactive'}]} value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
           </div>
-          <Input label="Password" type="password" placeholder={editingUser ? "Leave blank to keep current" : "Enter password"} value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
+          <Input 
+            label="Password" 
+            type={showPassword ? "text" : "password"} 
+            placeholder={editingUser ? "Leave blank to keep current" : "Enter password"} 
+            value={form.password} 
+            onChange={e => setForm({ ...form, password: e.target.value })} 
+            suffix={
+              <button 
+                type="button" 
+                onClick={() => setShowPassword(!showPassword)}
+                className="focus:outline-none hover:text-blue-600 transition-colors"
+              >
+                {showPassword ? <EyeOffIcon size={14} /> : <EyeIcon size={14} />}
+              </button>
+            }
+          />
         </div>
       </Modal>
     </div>

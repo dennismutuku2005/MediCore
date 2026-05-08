@@ -68,22 +68,23 @@ export default function NurseVitals() {
   );
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
-          <div>
-            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Active Ward Census Telemetry</h3>
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Real-time vital signs monitoring</p>
-          </div>
-          <Badge status="active">LIVE SENSORS</Badge>
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-xl p-8 shadow-md flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Active Ward Census Telemetry</h2>
+          <p className="text-sm font-medium text-blue-100 opacity-80 mt-1">Real-time vital signs monitoring and clinical auditing</p>
         </div>
+        <Badge status="active" className="bg-white/20 text-white border-white/40 border">LIVE SENSORS</Badge>
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
         <Table headers={['Patient Identity', 'Room/Ward', 'BP (Sys/Dia)', 'HR (BPM)', 'Temp (°C)', 'Last Audit', 'Action']}>
           {patients.map(p => {
             const v = vitalsList.find(vt => vt.patientId === p.id);
             return (
               <tr key={p.id} className="hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 font-medium">
                 <td className="px-6 py-4 text-sm font-bold text-slate-800">{p.name}</td>
-                <td className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{p.ward || 'General'}</td>
+                <td className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{p.ward?.name || 'General'}</td>
                 <td className="px-6 py-4 text-sm font-black text-blue-600">{v?.bp || '—'}</td>
                 <td className="px-6 py-4 text-sm font-bold text-slate-700">{v?.hr || '—'}</td>
                 <td className="px-6 py-4 text-sm font-bold text-slate-700">{v ? `${v.temp}°C` : '—'}</td>

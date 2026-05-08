@@ -8,8 +8,9 @@ import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { apiFetch } from '@/lib/api';
-import { SearchIcon, EditIcon, TrashIcon, PlusIcon } from '@/components/ui/Icons';
+import { SearchIcon, EditIcon, TrashIcon, PlusIcon, EyeIcon, EyeOffIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
+import Combobox from '@/components/ui/Combobox';
 
 export default function AdminDoctors() {
   const [loading, setLoading] = useState(true);
@@ -23,17 +24,25 @@ export default function AdminDoctors() {
     email: '', 
     specialization: '', 
     phone: '', 
-    ward: '', 
+    wardId: '', 
     username: '', 
     password: '' 
   });
   const [editingDoc, setEditingDoc] = useState<any>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [wards, setWards] = useState<any[]>([]);
 
   const fetchDoctors = async () => {
     try {
-      const res = await apiFetch('/doctors');
-      if (res.status === 'success') {
-        setDoctorsList(res.data || []);
+      const [docRes, wardRes] = await Promise.all([
+        apiFetch('/doctors'),
+        apiFetch('/wards')
+      ]);
+      if (docRes.status === 'success') {
+        setDoctorsList(docRes.data || []);
+      }
+      if (wardRes.status === 'success') {
+        setWards(wardRes.data || []);
       }
     } catch (error) {
       console.error("Failed to fetch doctors:", error);
@@ -50,7 +59,7 @@ export default function AdminDoctors() {
 
   const handleOpenAdd = () => {
     setEditingDoc(null);
-    setForm({ id: '', name: '', email: '', specialization: 'General', phone: '', ward: 'Ward A', username: '', password: '' });
+    setForm({ id: '', name: '', email: '', specialization: 'General', phone: '', wardId: '', username: '', password: '' });
     setModalOpen(true);
   };
 
@@ -62,7 +71,7 @@ export default function AdminDoctors() {
       email: doc.email || '', 
       specialization: doc.specialization || 'General', 
       phone: doc.phone || '', 
-      ward: doc.ward || 'Ward A', 
+      wardId: doc.ward?.id || '', 
       username: doc.username || '', 
       password: '' 
     });
@@ -142,7 +151,7 @@ export default function AdminDoctors() {
               <td className="px-5 py-3 text-sm font-bold text-slate-800">{d.name}</td>
               <td className="px-5 py-3 text-sm text-blue-600 font-bold">{d.specialization}</td>
               <td className="px-5 py-3 text-sm text-slate-600">{d.phone || 'N/A'}</td>
-              <td className="px-5 py-3 text-sm text-slate-500">{d.ward}</td>
+              <td className="px-5 py-3 text-sm text-slate-500">{d.ward?.name || 'Unassigned'}</td>
               <td className="px-5 py-3 text-sm"><Badge status={d.status || 'active'} /></td>
               <td className="px-5 py-3 text-sm">
                 <div className="flex items-center gap-2">
@@ -173,10 +182,34 @@ export default function AdminDoctors() {
             <Input label="Department/Specialty" placeholder="e.g. Pediatrics" value={form.specialization} onChange={e => setForm({ ...form, specialization: e.target.value })} />
             <Input label="Mobile Contact" placeholder="+254..." value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
           </div>
-          <Input label="Primary Ward" options={[{value:'Ward A',label:'Ward A'},{value:'Ward B',label:'Ward B'},{value:'Ward C',label:'Ward C'},{value:'ICU',label:'ICU'}]} value={form.ward} onChange={e => setForm({ ...form, ward: e.target.value })} />
+          <Combobox 
+            label="Primary Ward Allocation" 
+            placeholder="Select Ward..."
+            options={[
+              { value: '', label: 'Unassigned / OPD' },
+              ...wards.map(w => ({ value: w.id, label: w.name, sublabel: `${w.occupied}/${w.totalBeds || w.capacity} Beds` }))
+            ]} 
+            value={form.wardId} 
+            onChange={val => setForm({ ...form, wardId: val })} 
+          />
           <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-50">
             <Input label="System Username" placeholder="e.g. jsmith_doc" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} />
-            <Input label="Temporary Password" type="password" placeholder="••••••" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
+            <Input 
+              label="Temporary Password" 
+              type={showPassword ? "text" : "password"} 
+              placeholder="••••••" 
+              value={form.password} 
+              onChange={e => setForm({ ...form, password: e.target.value })} 
+              suffix={
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="focus:outline-none hover:text-blue-600 transition-colors"
+                >
+                  {showPassword ? <EyeOffIcon size={14} /> : <EyeIcon size={14} />}
+                </button>
+              }
+            />
           </div>
         </div>
       </Modal>

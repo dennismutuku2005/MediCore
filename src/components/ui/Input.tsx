@@ -5,11 +5,12 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTe
   label?: string;
   error?: string;
   icon?: React.ReactNode;
+  suffix?: React.ReactNode;
   isTextarea?: boolean;
   options?: { value: string; label: string }[];
 }
 
-export default function Input({ label, error, icon, isTextarea, options, ...props }: InputProps) {
+export default function Input({ label, error, icon, suffix, isTextarea, options, ...props }: InputProps) {
   const baseClasses = "w-full h-8 px-3 border border-slate-200 rounded text-sm bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-600 transition-colors placeholder:text-slate-400";
   
   const isReadOnly = props.readOnly || (props.value !== undefined && !props.onChange);
@@ -29,8 +30,10 @@ export default function Input({ label, error, icon, isTextarea, options, ...prop
         ) : isTextarea ? (
           <textarea className={`${baseClasses} h-auto min-h-[80px] py-2`} {...(safeProps as any)} />
         ) : (
-          <input className={`${baseClasses} ${icon ? 'pl-9' : ''}`} {...(safeProps as any)} />
+          <input className={`${baseClasses} ${icon ? 'pl-9' : ''} ${suffix ? 'pr-9' : ''}`} {...(safeProps as any)} />
         )}
+
+        {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">{suffix}</span>}
       </div>
       
       {error && <p className="text-[11px] text-rose-600">{error}</p>}

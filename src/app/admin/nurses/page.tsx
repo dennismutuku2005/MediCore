@@ -7,9 +7,10 @@ import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
-import { SearchIcon, EditIcon, TrashIcon, PlusIcon } from '@/components/ui/Icons';
+import { SearchIcon, EditIcon, TrashIcon, PlusIcon, EyeIcon, EyeOffIcon } from '@/components/ui/Icons';
 import { apiFetch } from '@/lib/api';
 import { toast } from 'sonner';
+import Combobox from '@/components/ui/Combobox';
 
 export default function AdminNurses() {
   const [loading, setLoading] = useState(true);
@@ -17,14 +18,22 @@ export default function AdminNurses() {
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ id: '', name: '', email: '', phone: '', ward: 'Ward A', shift: 'Morning', username: '', password: '' });
+  const [form, setForm] = useState({ id: '', name: '', email: '', phone: '', wardId: '', shift: 'Morning', username: '', password: '' });
+  const [wards, setWards] = useState<any[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
   const [editingNurse, setEditingNurse] = useState<any>(null);
 
   const fetchNurses = async () => {
     try {
-      const res = await apiFetch('/nurses');
-      if (res.status === 'success') {
-        setNursesList(res.data || []);
+      const [nurseRes, wardRes] = await Promise.all([
+        apiFetch('/nurses'),
+        apiFetch('/wards')
+      ]);
+      if (nurseRes.status === 'success') {
+        setNursesList(nurseRes.data || []);
+      }
+      if (wardRes.status === 'success') {
+        setWards(wardRes.data || []);
       }
     } catch (error) {
       console.error("Failed to fetch nurses:", error);
@@ -42,7 +51,7 @@ export default function AdminNurses() {
 
   const handleOpenAdd = () => {
     setEditingNurse(null);
-    setForm({ id: '', name: '', email: '', phone: '', ward: 'Ward A', shift: 'Morning', username: '', password: '' });
+    setForm({ id: '', name: '', email: '', phone: '', wardId: '', shift: 'Morning', username: '', password: '' });
     setModalOpen(true);
   };
 
@@ -53,7 +62,7 @@ export default function AdminNurses() {
       name: nurse.name, 
       email: nurse.email || '', 
       phone: nurse.phone || '',
-      ward: nurse.ward || 'Ward A', 
+      wardId: nurse.ward?.id || '', 
       shift: nurse.shift || 'Morning',
       username: nurse.username || '',
       password: ''
@@ -130,7 +139,7 @@ export default function AdminNurses() {
             <tr key={n.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 font-medium group">
               <td className="px-5 py-3"><div className={tableStyles.avatar} style={{ background: '#ecfdf5', color: '#059669' }}>{getInitials(n.name)}</div></td>
               <td className="px-5 py-3 text-sm font-bold text-slate-800">{n.name}</td>
-              <td className="px-5 py-3 text-sm text-slate-600 font-bold">{n.ward}</td>
+              <td className="px-5 py-3 text-sm text-slate-600 font-bold">{n.ward?.name || 'Unassigned'}</td>
               <td className="px-5 py-3 text-sm"><Badge status={n.shift} /></td>
               <td className="px-5 py-3 text-sm"><Badge status={n.status || 'active'} /></td>
               <td className="px-5 py-3 text-sm">
@@ -162,14 +171,38 @@ export default function AdminNurses() {
             <Input label="Mobile Link" placeholder="+254 700 000 000" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Ward Allocation" options={[{value:'Ward A',label:'Ward A'},{value:'Ward B',label:'Ward B'},{value:'Ward C',label:'Ward C'},{value:'ICU',label:'ICU'}]} value={form.ward} onChange={e => setForm({ ...form, ward: e.target.value })} />
+            <Combobox 
+              label="Ward Allocation" 
+              placeholder="Select Ward..."
+              options={[
+                { value: '', label: 'Unassigned' },
+                ...wards.map(w => ({ value: w.id, label: w.name, sublabel: `${w.occupied}/${w.totalBeds || w.capacity} Beds` }))
+              ]} 
+              value={form.wardId} 
+              onChange={val => setForm({ ...form, wardId: val })} 
+            />
             <Input label="Operational Shift" options={[{value:'Morning',label:'Morning'},{value:'Evening',label:'Evening'},{value:'Night',label:'Night'}]} value={form.shift} onChange={e => setForm({ ...form, shift: e.target.value })} />
           </div>
           <div className="pt-4 border-t border-slate-50">
             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">System Authentication</h4>
             <div className="grid grid-cols-2 gap-4">
               <Input label="Identifier (Username)" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} />
-              <Input label="Security Key (Password)" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder={editingNurse ? "Leave blank to preserve" : "Enter temporary key"} />
+              <Input 
+                label="Security Key (Password)" 
+                type={showPassword ? "text" : "password"} 
+                value={form.password} 
+                onChange={e => setForm({ ...form, password: e.target.value })} 
+                placeholder={editingNurse ? "Leave blank to preserve" : "Enter temporary key"} 
+                suffix={
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="focus:outline-none hover:text-blue-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOffIcon size={14} /> : <EyeIcon size={14} />}
+                  </button>
+                }
+              />
             </div>
           </div>
         </div>

@@ -57,15 +57,21 @@ export default function NurseDashboard() {
   );
 
   return (
-    <div className="animate-in fade-in duration-500">
-      <div className="bg-blue-600 text-white rounded-xl p-8 mb-8 shadow-lg flex items-center justify-between relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rotate-45 translate-x-32 -translate-y-32" />
-        <div className="relative z-10">
-          <div className="text-[10px] font-black uppercase tracking-[0.3em] mb-2 opacity-80">Operational Clinical Sector</div>
-          <h2 className="text-2xl font-black tracking-tight mb-1">Maternity Ward Alpha</h2>
-          <p className="text-xs font-bold opacity-70">Provider: {user?.name || 'Assigned Nurse'} • Morning Shift (07:00 - 15:00)</p>
+    <div className="animate-in fade-in duration-500 space-y-8">
+      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 text-white rounded-xl p-10 shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rotate-12 translate-x-32 -translate-y-32" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-[0.4em] mb-3 opacity-70">Operational Clinical Sector</div>
+            <h2 className="text-3xl font-bold tracking-tight mb-2">{user?.ward?.name || 'General Clinical Ward'}</h2>
+            <div className="flex items-center gap-4">
+               <p className="text-sm font-semibold text-blue-50">Provider: {user?.name || 'Assigned Nurse'}</p>
+               <span className="w-1 h-1 rounded-full bg-blue-300 opacity-50" />
+               <p className="text-sm font-semibold text-blue-50">Shift: ALPHA-ACTIVE</p>
+            </div>
+          </div>
+          <Badge status="completed" className="bg-white/20 text-white border-white/40 border-2 backdrop-blur-md px-4 py-2 font-black tracking-widest">STATION ONLINE</Badge>
         </div>
-        <Badge status="completed" className="bg-white/20 text-white border-white/40 border backdrop-blur-sm">ACTIVE SHIFT</Badge>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">

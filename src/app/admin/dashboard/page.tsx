@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import StatCard from '@/components/ui/StatCard';
 import BarChart from '@/components/charts/BarChart';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
@@ -14,11 +14,14 @@ export default function AdminDashboard() {
     totalPatients: 0,
     totalDoctors: 0,
     totalAppointments: 0,
-    pendingLabs: 0
+    pendingLabs: 0,
+    wardOccupancy: 0
   });
   const [admissions, setAdmissions] = useState([]);
   const [recentActivities, setRecentActivities] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [timeRange, setTimeRange] = useState(30);
+  const [fetchingCharts, setFetchingCharts] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -35,7 +38,8 @@ export default function AdminDashboard() {
             totalPatients: dashboardData.data.totalPatients || 0,
             totalDoctors: dashboardData.data.totalDoctors || 0,
             totalAppointments: dashboardData.data.totalAppointments || 0,
-            pendingLabs: dashboardData.data.pendingLabs || 0
+            pendingLabs: dashboardData.data.pendingLabs || 0,
+            wardOccupancy: dashboardData.data.wardOccupancy || 0
           });
         }
 
@@ -58,6 +62,24 @@ export default function AdminDashboard() {
     }
     fetchData();
   }, []);
+
+  const fetchCharts = useCallback(async (days: number) => {
+    setFetchingCharts(true);
+    try {
+      const res = await apiFetch(`/dashboard?action=charts&days=${days}`);
+      if (res.status === 'success') {
+        setAdmissions(res.data.admissions || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch chart data:", error);
+    } finally {
+      setFetchingCharts(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCharts(timeRange);
+  }, [timeRange, fetchCharts]);
 
   if (loading) return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -91,7 +113,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard icon={<PersonIcon size={20} />} label="Total Patients" value={stats.totalPatients.toLocaleString()} iconBg="rgba(37, 99, 235, 0.1)" iconColor="#2563eb" />
         <StatCard icon={<CalendarIcon size={20} />} label="Appointments" value={stats.totalAppointments} iconBg="rgba(245, 158, 11, 0.1)" iconColor="#d97706" />
-        <StatCard icon={<BedIcon size={20} />} label="Active Doctors" value={stats.totalDoctors} iconBg="rgba(16, 185, 129, 0.1)" iconColor="#059669" />
+        <StatCard icon={<BedIcon size={20} />} label="Ward Occupancy" value={stats.wardOccupancy} iconBg="rgba(16, 185, 129, 0.1)" iconColor="#059669" />
         <StatCard icon={<ActivityIcon size={20} />} label="Pending Labs" value={stats.pendingLabs} iconBg="rgba(239, 68, 68, 0.1)" iconColor="#dc2626" />
       </div>
 
@@ -106,14 +128,19 @@ export default function AdminDashboard() {
             </div>
             <div className="flex gap-1">
                 {[7, 30].map(d => (
-                    <button key={d} className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider transition-all ${d === 30 ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:bg-slate-100'}`}>
+                    <button 
+                        key={d} 
+                        onClick={() => setTimeRange(d)}
+                        disabled={fetchingCharts}
+                        className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider transition-all ${timeRange === d ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:bg-slate-100 disabled:opacity-50'}`}
+                    >
                         {d} Days
                     </button>
                 ))}
             </div>
           </div>
           <div className="flex-1 p-6">
-            <div className="h-[250px] relative">
+            <div className={`h-[250px] relative transition-opacity duration-300 ${fetchingCharts ? 'opacity-50' : 'opacity-100'}`}>
               <BarChart data={admissions} height={250} color="#2563eb" />
             </div>
           </div>

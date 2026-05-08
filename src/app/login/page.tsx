@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { PersonIcon, LockIcon } from '@/components/ui/Icons';
+import { PersonIcon, LockIcon, EyeIcon, EyeOffIcon } from '@/components/ui/Icons';
 import Image from 'next/image';
 import authService, { roleRedirectPath } from '@/lib/auth';
 
@@ -11,6 +11,7 @@ export default function Login() {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -83,10 +84,19 @@ export default function Login() {
           />
           <Input 
             label="Password" 
-            type="password" 
+            type={showPassword ? "text" : "password"} 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             icon={<LockIcon size={16} />}
+            suffix={
+              <button 
+                type="button" 
+                onClick={() => setShowPassword(!showPassword)}
+                className="focus:outline-none hover:text-blue-600 transition-colors"
+              >
+                {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
+              </button>
+            }
             placeholder="••••••••"
           />
 

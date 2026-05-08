@@ -14,6 +14,7 @@ export interface UserData {
   username: string;
   role:     string;  // 'admin' | 'doctor' | 'nurse' | 'labtech' | 'patient'
   email:    string;
+  ward?:    any;
 }
 
 export interface LoginResult {

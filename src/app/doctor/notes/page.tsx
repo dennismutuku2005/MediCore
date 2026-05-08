@@ -8,12 +8,13 @@ import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 
 export default function DoctorNotes() {
-  const [loading, setLoading] = useState(true);
-  const [patients, setPatients] = useState<any[]>([]);
+  const [loading, setLoading]           = useState(true);
+  const [patients, setPatients]         = useState<any[]>([]);
+  const [patientSearch, setPatientSearch] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<number | null>(null);
-  const [notes, setNotes] = useState<any[]>([]);
-  const [noteText, setNoteText] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [notes, setNotes]               = useState<any[]>([]);
+  const [noteText, setNoteText]         = useState('');
+  const [saving, setSaving]             = useState(false);
   const user = authService.getUser();
 
   const fetchNotes = async (patientId: number) => {
@@ -107,13 +108,24 @@ export default function DoctorNotes() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 h-[calc(100vh-120px)] animate-in fade-in duration-300">
-      {/* Patient Selection Sidebar */}
+      {/* Patient Sidebar with Search */}
       <div className="bg-white border border-slate-200 rounded flex flex-col shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
-          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Clinical Census</h3>
+          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-3">Clinical Census</h3>
+          <div className="relative">
+            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none text-xs">🔍</span>
+            <input
+              className="w-full h-8 pl-7 pr-3 border border-slate-200 rounded text-xs bg-white focus:outline-none focus:border-blue-500 placeholder:text-slate-300 transition-colors"
+              placeholder="Search patients..."
+              value={patientSearch}
+              onChange={e => setPatientSearch(e.target.value)}
+            />
+          </div>
         </div>
         <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
-          {patients.map(p => (
+          {patients
+            .filter(p => p.name?.toLowerCase().includes(patientSearch.toLowerCase()))
+            .map(p => (
             <div 
               key={p.id} 
               className={`px-5 py-4 cursor-pointer transition-all group ${selectedPatient === p.id ? 'bg-blue-50/50 border-r-4 border-r-blue-600' : 'hover:bg-slate-50'}`}
@@ -123,8 +135,11 @@ export default function DoctorNotes() {
               <div className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">#{p.id} • {p.diagnosis || 'Observation'}</div>
             </div>
           ))}
-          {patients.length === 0 && (
-            <div className="p-8 text-center text-[10px] font-bold text-slate-300 uppercase tracking-widest">No assigned patients</div>
+            ))}
+          {patients.filter(p => p.name?.toLowerCase().includes(patientSearch.toLowerCase())).length === 0 && (
+            <div className="p-8 text-center text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+              {patientSearch ? `No match for "${patientSearch}"` : 'No assigned patients'}
+            </div>
           )}
         </div>
       </div>
@@ -161,7 +176,11 @@ export default function DoctorNotes() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(n.createdAt || n.date).toLocaleString()}</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  {n.noteDate
+                    ? new Date(n.noteDate).toLocaleString()
+                    : new Date(n.createdAt || n.date || Date.now()).toLocaleString()}
+                </span>
                 </div>
                 <Badge status="info">Protocol Entry</Badge>
               </div>
