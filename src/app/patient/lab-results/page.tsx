@@ -16,10 +16,14 @@ export default function PatientLabResults() {
   useEffect(() => {
     async function fetchResults() {
       try {
-        if (!user?.id) return;
-        const res = await apiFetch(`/doctor/lab-requests?patientId=${user.id}`);
-        if (res.status === 'success') {
-          setResults(res.data || []);
+        const patientsRes = await apiFetch('/patients');
+        const currentPatient = patientsRes.data?.find((p: any) => p.user?.username === user?.username);
+        
+        if (currentPatient) {
+          const res = await apiFetch(`/labtech/queue?patientId=${currentPatient.id}`);
+          if (res.status === 'success') {
+            setResults(res.data || []);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch lab results:", error);
@@ -28,7 +32,7 @@ export default function PatientLabResults() {
       }
     }
     fetchResults();
-  }, [user?.id]);
+  }, [user?.username]);
 
   if (loading) return (
     <div className="space-y-3">

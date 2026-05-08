@@ -82,7 +82,7 @@ class AuthService {
   /** Make an authenticated API request */
   async authFetch(endpoint: string, options: RequestInit = {}): Promise<Response> {
     const token = this.getToken();
-    return fetch(`${API_BASE}${endpoint}`, {
+    const response = await fetch(`${API_BASE}${endpoint}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -90,6 +90,13 @@ class AuthService {
         ...options.headers,
       },
     });
+
+    if (response.status === 401 && !endpoint.includes('/auth')) {
+      this.logout();
+      if (typeof window !== 'undefined') window.location.href = '/login';
+    }
+
+    return response;
   }
 }
 

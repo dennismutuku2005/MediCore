@@ -18,7 +18,9 @@ export default function StatCard({ icon, label, value, trend, trendUp, iconBg, i
     <div className="bg-white border border-slate-200 p-5 rounded flex items-start justify-between shadow-sm">
       <div>
         <p className="text-xs font-bold text-slate-500 uppercase tracking-tight mb-1">{label}</p>
-        <h4 className="text-2xl font-extrabold text-slate-900">{value}</h4>
+        <h4 className="text-2xl font-extrabold text-slate-900">
+          {(value === null || value === undefined || (typeof value === 'number' && isNaN(value))) ? '—' : value.toLocaleString()}
+        </h4>
         {trend && (
           <div className={`mt-2 flex items-center gap-1 text-xs font-bold ${trendUp ? 'text-green-600' : 'text-red-600'}`}>
             {trendUp ? <TrendUpIcon size={12} /> : <TrendDownIcon size={12} />}

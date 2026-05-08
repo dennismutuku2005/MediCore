@@ -8,19 +8,27 @@ import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 import { PlusIcon } from '@/components/ui/Icons';
+import { toast } from 'sonner';
 
 export default function PatientAppointments() {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [form, setForm] = useState({ department: 'Internal Medicine', date: '', time: '', reason: '' });
+  const [saving, setSaving] = useState(false);
   const [appts, setAppts] = useState<any[]>([]);
   const user = authService.getUser();
 
   const fetchAppts = async () => {
     try {
-      const res = await apiFetch(`/doctor/appointments?patientId=${user?.id || ''}`);
-      if (res.status === 'success') {
-        // Filter by patient ID if the backend doesn't handle it yet
-        setAppts(res.data || []);
+      // Find the patient record that matches this user's username
+      const patientsRes = await apiFetch('/patients');
+      const currentPatient = patientsRes.data?.find((p: any) => p.user?.username === user?.username);
+      
+      if (currentPatient) {
+        const res = await apiFetch(`/appointments?patientId=${currentPatient.id}`);
+        if (res.status === 'success') {
+          setAppts(res.data || []);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch patient appointments:", error);
@@ -32,6 +40,39 @@ export default function PatientAppointments() {
   useEffect(() => {
     fetchAppts();
   }, [user?.id]);
+
+  const handleRequest = async () => {
+    if (!form.date?.trim() || !form.time?.trim() || !form.reason?.trim()) {
+      toast.error("Protocol Error: Please provide all mandatory clinical parameters (Date, Time, and Reason)");
+      return;
+    }
+    setSaving(true);
+    try {
+      const patientsRes = await apiFetch('/patients');
+      const currentPatient = patientsRes.data?.find((p: any) => p.user?.username === user?.username);
+
+      if (!currentPatient) {
+        toast.error("Clinical profile not identified.");
+        return;
+      }
+
+      console.log("[DEBUG] Dispatching appointment payload:", { ...form, patientId: currentPatient.id, status: 'pending' });
+      const res = await apiFetch('/appointments', {
+        method: 'POST',
+        body: JSON.stringify({ ...form, patientId: currentPatient.id, status: 'pending' })
+      });
+
+      if (res.status === 'success') {
+        toast.success("Encounter request dispatched to clinical triage");
+        setModalOpen(false);
+        await fetchAppts();
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to dispatch encounter request.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (loading) return (
     <div className="space-y-4">
@@ -58,7 +99,7 @@ export default function PatientAppointments() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-black text-slate-900 tracking-tight">{a.doctor || 'Assigned Physician'}</span>
+                  <span className="text-sm font-black text-slate-900 tracking-tight">{a.doctor?.name || a.doctor || 'Assigned Physician'}</span>
                   <Badge status={a.status} />
                 </div>
                 <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{a.department || 'Clinical Department'} • {a.reason || 'General Consultation'}</div>
@@ -90,19 +131,19 @@ export default function PatientAppointments() {
       </div>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Request Clinical Encounter"
-        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Abort Request</Button><Button onClick={() => setModalOpen(false)}>Dispatch Signal</Button></>}>
+        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Abort Request</Button><Button loading={saving} onClick={handleRequest}>Dispatch Signal</Button></>}>
         <div className="space-y-4 py-2">
           <Input label="Clinical Department" options={[
             {value:'Internal Medicine',label:'Internal Medicine'},
             {value:'Pediatrics',label:'Pediatrics'},
             {value:'Surgery',label:'Surgery'},
             {value:'Cardiology',label:'Cardiology'}
-          ]} />
+          ]} value={form.department} onChange={e => setForm({...form, department: e.target.value})} />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Preferred Date" type="date" />
-            <Input label="Preferred Time" type="time" />
+            <Input label="Preferred Date" type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
+            <Input label="Preferred Time" type="time" value={form.time} onChange={e => setForm({...form, time: e.target.value})} />
           </div>
-          <Input label="Clinical Reason" isTextarea placeholder="Briefly explain your medical concern..." />
+          <Input label="Clinical Reason" isTextarea placeholder="Briefly explain your medical concern..." value={form.reason} onChange={e => setForm({...form, reason: e.target.value})} />
         </div>
       </Modal>
     </div>

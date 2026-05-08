@@ -30,6 +30,7 @@ const navConfig: any = {
       { label: 'Wards & Beds', href: '/admin/wards', icon: <BedIcon size={18} /> },
     ]},
     { label: 'System', items: [
+      { label: 'Users', href: '/admin/users', icon: <PersonIcon size={18} /> },
       { label: 'Reports', href: '/admin/reports', icon: <ReportIcon size={18} /> },
       { label: 'Settings', href: '/admin/settings', icon: <SettingsIcon size={18} /> },
     ]}
@@ -44,7 +45,6 @@ const navConfig: any = {
       { label: 'Medical Records', href: '/doctor/records', icon: <FileTextIcon size={18} /> },
       { label: 'Prescriptions', href: '/doctor/prescriptions', icon: <PillIcon size={18} /> },
       { label: 'Lab Requests', href: '/doctor/lab-requests', icon: <FlaskIcon size={18} /> },
-      { label: 'Clinical Notes', href: '/doctor/notes', icon: <ClipboardIcon size={18} /> },
     ]}
   ],
   nurse: [

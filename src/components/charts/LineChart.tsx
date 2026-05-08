@@ -8,14 +8,30 @@ interface LineChartProps {
   color?: string;
 }
 
-export default function LineChart({ data, width = 500, height = 150, color = 'var(--primary)' }: LineChartProps) {
+export default function LineChart({ data: rawData = [], width = 500, height = 150, color = 'var(--primary)' }: LineChartProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const padding = { top: 10, right: 10, bottom: 25, left: 35 };
   const chartW = width - padding.left - padding.right;
   const chartH = height - padding.top - padding.bottom;
-  const minVal = Math.min(...data.map(d => d.value)) - 2;
-  const maxVal = Math.max(...data.map(d => d.value)) + 2;
-  const range = maxVal - minVal || 1;
+
+  // Filter and sanitize data
+  const data = (rawData || []).map(d => ({
+    label: d.label || '',
+    value: isNaN(Number(d.value)) ? 0 : Number(d.value)
+  }));
+
+  if (data.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-slate-300 uppercase tracking-widest border border-slate-50 border-dashed rounded-lg">
+        Telemetry unavailable
+      </div>
+    );
+  }
+
+  const values = data.map(d => d.value);
+  const minVal = Math.min(...values) - 2;
+  const maxVal = Math.max(...values) + 2;
+  const range = (maxVal - minVal) || 1;
 
   const points = data.map((d, i) => {
     const x = padding.left + (i / (data.length - 1 || 1)) * chartW;

@@ -162,9 +162,9 @@ export default function AdminDashboard() {
               <tr key={app.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 group">
                 <td className="px-5 py-3 text-[10px] font-mono text-slate-400 italic">#{app.id}</td>
                 <td className="px-5 py-3">
-                  <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600">{app.patient}</span>
+                  <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600">{app.patient?.name || app.patient}</span>
                 </td>
-                <td className="px-5 py-3 text-sm text-slate-600 font-medium">{app.doctor}</td>
+                <td className="px-5 py-3 text-sm text-slate-600 font-medium">{app.doctor?.name || app.doctor}</td>
                 <td className="px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">{app.department}</td>
                 <td className="px-5 py-3">
                   <div className="flex flex-col">

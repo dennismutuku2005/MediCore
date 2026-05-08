@@ -14,10 +14,14 @@ export default function PatientDashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!user?.id) return;
-        const res = await apiFetch(`/patient/dashboard?patientId=${user.id}`);
-        if (res.status === 'success') {
-          setData(res.data);
+        const patientsRes = await apiFetch('/patients');
+        const currentPatient = patientsRes.data?.find((p: any) => p.user?.username === user?.username);
+        
+        if (currentPatient) {
+          const res = await apiFetch(`/patient/dashboard?patientId=${currentPatient.id}`);
+          if (res.status === 'success') {
+            setData(res.data);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch patient dashboard data:", error);
@@ -26,7 +30,7 @@ export default function PatientDashboard() {
       }
     }
     fetchData();
-  }, [user?.id]);
+  }, [user?.username]);
 
   if (loading) return (
     <div className="space-y-6">

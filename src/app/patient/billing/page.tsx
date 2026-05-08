@@ -5,46 +5,115 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { DownloadIcon } from '@/components/ui/Icons';
+import { apiFetch } from '@/lib/api';
+import authService from '@/lib/auth';
+import { toast } from 'sonner';
 
 export default function PatientBilling() {
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 1500); return () => clearTimeout(t); }, []);
+  const [bills, setBills] = useState<any[]>([]);
+  const [processingId, setProcessingId] = useState<number | null>(null);
+  const user = authService.getUser();
 
-  const bills = [
-    { id: 'INV-001', date: '2025-04-10', item: 'Consultation Fee', amount: 'KES 2,500', status: 'paid' },
-    { id: 'INV-002', date: '2025-04-10', item: 'Laboratory (CBC)', amount: 'KES 1,200', status: 'paid' },
-    { id: 'INV-003', date: '2025-04-12', item: 'Prescription Drugs', amount: 'KES 3,450', status: 'pending' },
-  ];
+  const fetchData = async () => {
+    try {
+      const patientsRes = await apiFetch('/patients');
+      const currentPatient = patientsRes.data?.find((p: any) => p.user?.username === user?.username);
+      
+      if (currentPatient) {
+        const res = await apiFetch(`/billing/invoices?patientId=${currentPatient.id}`);
+        if (res.status === 'success') {
+          setBills(res.data || []);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch billing data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (loading) return <><SkeletonLoader height={120} style={{ marginBottom: 24 }} /><SkeletonLoader height={52} count={4} /></>;
+  useEffect(() => {
+    fetchData();
+  }, [user?.username]);
+
+  const handlePay = async (id: number) => {
+    setProcessingId(id);
+    try {
+      const res = await apiFetch('/billing/pay', {
+        method: 'POST',
+        body: JSON.stringify({ id })
+      });
+      if (res.status === 'success') {
+        toast.success("Payment verified and processed");
+        await fetchData();
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Financial gateway protocol error.");
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const outstanding = bills
+    .filter(b => b.status === 'pending')
+    .reduce((sum, b) => sum + (b.amount || 0), 0);
+
+  if (loading) return <><SkeletonLoader height={120} style={{ marginBottom: 24 }} className="rounded-xl" /><SkeletonLoader height={52} count={4} className="rounded" /></>;
 
   return (
-    <>
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm mb-4">
-        <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Current Outstanding Balance</div>
-        <div className="text-lg font-bold text-slate-800">KES 3,450</div>
-        <div style={{ marginTop: 16 }}>
-          <Button style={{ background: '#fff', color: 'var(--primary)', fontWeight: 700 }}>Pay Now</Button>
+    <div className="animate-in fade-in duration-500">
+      <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Financial Liability Protocol</div>
+          <div className="text-3xl font-black text-slate-900 tracking-tighter">KES {outstanding.toLocaleString()}</div>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 italic">Outstanding clinical fees requiring settlement</p>
         </div>
+        {outstanding > 0 && (
+          <Button className="h-12 px-10 text-[11px] font-black uppercase tracking-widest shadow-lg shadow-blue-100">Settle Entire Registry</Button>
+        )}
       </div>
 
-      <h3 className="text-base font-bold text-slate-800 mb-4" style={{ marginBottom: 16 }}>Payment History</h3>
-      <Table headers={['Invoice ID', 'Date', 'Item Description', 'Amount', 'Status', 'Action']}>
-        {bills.map(b => (
-          <tr key={b.id}>
-            <td>{b.id}</td>
-            <td>{b.date}</td>
-            <td><strong>{b.item}</strong></td>
-            <td>{b.amount}</td>
-            <td><Badge status={b.status} /></td>
-            <td>
-              <Button variant="secondary" style={{ padding: '6px 12px', fontSize: 12 }}>
-                <DownloadIcon size={14} /> Receipt
-              </Button>
-            </td>
-          </tr>
-        ))}
-      </Table>
-    </>
+      <div className="mb-6">
+        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Financial Chronology</h3>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Audit trail of clinical invoices and payment verification</p>
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <Table headers={['Reference ID', 'Issue Date', 'Service Protocol', 'Volume (Amount)', 'Matrix Status', 'Operational Action']}>
+          {bills.map(b => (
+            <tr key={b.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 font-medium">
+              <td className="px-5 py-4 text-sm font-mono text-slate-400">#{b.invoiceNumber || b.id}</td>
+              <td className="px-5 py-4 text-sm text-slate-500">{b.date}</td>
+              <td className="px-5 py-4 text-sm font-black text-slate-800 uppercase tracking-tighter">{b.itemDescription}</td>
+              <td className="px-5 py-4 text-sm font-bold text-slate-900">KES {b.amount?.toLocaleString()}</td>
+              <td className="px-5 py-4 text-sm"><Badge status={b.status} /></td>
+              <td className="px-5 py-4 text-sm">
+                <div className="flex items-center gap-2">
+                  {b.status === 'pending' ? (
+                    <Button 
+                      loading={processingId === b.id}
+                      onClick={() => handlePay(b.id)}
+                      className="h-8 px-4 text-[10px] font-black uppercase tracking-widest"
+                    >
+                      Process Payment
+                    </Button>
+                  ) : (
+                    <Button variant="secondary" className="h-8 px-3 text-[10px] font-black uppercase tracking-widest gap-1.5 shadow-sm">
+                      <DownloadIcon size={12} /> RECEIPT
+                    </Button>
+                  )}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </Table>
+        {bills.length === 0 && (
+          <div className="p-16 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+            No financial protocols identified in your account
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

@@ -106,7 +106,7 @@ export default function DoctorDashboard() {
             {appointments.map((app: any) => (
               <tr key={app.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 font-medium">
                 <td className="px-5 py-3 text-sm font-black text-blue-600 tracking-tight italic">{app.time || app.appointmentTime}</td>
-                <td className="px-5 py-3 text-sm font-bold text-slate-800">{app.patient}</td>
+                <td className="px-5 py-3 text-sm font-bold text-slate-800">{app.patient?.name || app.patient || 'Unknown'}</td>
                 <td className="px-5 py-3 text-sm text-slate-600 font-normal italic">{app.reason}</td>
                 <td className="px-5 py-3 text-sm"><Badge status={app.status} /></td>
                 <td className="px-5 py-3 text-sm">

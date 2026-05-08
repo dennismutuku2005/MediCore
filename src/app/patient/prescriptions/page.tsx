@@ -13,10 +13,14 @@ export default function PatientPrescriptions() {
   useEffect(() => {
     async function fetchMeds() {
       try {
-        if (!user?.id) return;
-        const res = await apiFetch(`/patient/prescriptions?patientId=${user.id}`);
-        if (res.status === 'success') {
-          setMeds(res.data || []);
+        const patientsRes = await apiFetch('/patients');
+        const currentPatient = patientsRes.data?.find((p: any) => p.user?.username === user?.username);
+        
+        if (currentPatient) {
+          const res = await apiFetch(`/prescriptions?patientId=${currentPatient.id}`);
+          if (res.status === 'success') {
+            setMeds(res.data || []);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch prescriptions:", error);
@@ -25,7 +29,7 @@ export default function PatientPrescriptions() {
       }
     }
     fetchMeds();
-  }, [user?.id]);
+  }, [user?.username]);
 
   if (loading) return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -121,7 +121,11 @@ export default function NurseVitals() {
           </div>
         </div>
         <div className="h-[220px]">
-          <LineChart data={vitalsList.map(v => ({ value: v.hr, label: new Date(v.timestamp).getHours() + ':00' })).slice(-10)} color="#2563eb" />
+          <LineChart data={vitalsList.map(v => {
+            const date = v.timestamp ? new Date(v.timestamp) : new Date();
+            const hour = isNaN(date.getTime()) ? '--' : date.getHours() + ':00';
+            return { value: v.hr || 0, label: hour };
+          }).slice(-10)} color="#2563eb" />
         </div>
       </div>
 

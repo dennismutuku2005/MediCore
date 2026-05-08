@@ -124,8 +124,8 @@ export default function AdminAppointments() {
                 {appts.filter(a => (a.date || a.appointmentDate) === weekDates[i]).map(a => (
                   <div key={a.id} className="p-3 rounded border border-slate-200 bg-white shadow-sm hover:border-blue-300 transition-colors">
                     <div className="text-[9px] font-bold text-blue-600 uppercase mb-1">{a.time || a.appointmentTime}</div>
-                    <div className="text-xs font-bold text-slate-800 leading-tight">{a.patient}</div>
-                    <div className="text-[9px] text-slate-400 font-bold mt-1 uppercase">{a.doctor}</div>
+                    <div className="text-xs font-bold text-slate-800 leading-tight">{a.patient?.name || a.patient}</div>
+                    <div className="text-[9px] text-slate-400 font-bold mt-1 uppercase">{a.doctor?.name || a.doctor}</div>
                   </div>
                 ))}
               </div>
@@ -140,8 +140,8 @@ export default function AdminAppointments() {
           <Table headers={['Patient Identity', 'Attending Physician', 'Date', 'Time', 'Status']}>
             {appts.map(a => (
               <tr key={a.id} className="hover:bg-slate-50 border-b border-slate-100 last:border-0 font-medium">
-                <td className="px-5 py-3 text-sm font-bold text-slate-800">{a.patient}</td>
-                <td className="px-5 py-3 text-sm text-slate-600">{a.doctor}</td>
+                <td className="px-5 py-3 text-sm font-bold text-slate-800">{a.patient?.name || a.patient || 'Unknown'}</td>
+                <td className="px-5 py-3 text-sm text-slate-600">{a.doctor?.name || a.doctor || 'Unassigned'}</td>
                 <td className="px-5 py-3 text-sm text-slate-500 font-mono italic">{a.date || a.appointmentDate}</td>
                 <td className="px-5 py-3 text-sm text-blue-600 font-black">{a.time || a.appointmentTime}</td>
                 <td className="px-5 py-3 text-sm"><Badge status={a.status} /></td>
@@ -161,13 +161,19 @@ export default function AdminAppointments() {
         <div className="space-y-4 py-2">
           <Input 
             label="Patient Identity" 
-            options={patientsList.map(p => ({ value: p.id, label: p.name }))} 
+            options={[
+              { value: '', label: '— Select Patient —' },
+              ...patientsList.map(p => ({ value: p.id, label: p.name }))
+            ]} 
             value={form.patient_id} 
             onChange={e => setForm({...form, patient_id: e.target.value})} 
           />
           <Input 
             label="Assigned Doctor" 
-            options={doctorsList.map(d => ({ value: d.id, label: d.name }))} 
+            options={[
+              { value: '', label: '— Select Physician —' },
+              ...doctorsList.map(d => ({ value: d.id, label: d.name }))
+            ]} 
             value={form.doctor_id} 
             onChange={e => setForm({...form, doctor_id: e.target.value})} 
           />

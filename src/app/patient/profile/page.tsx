@@ -14,10 +14,14 @@ export default function PatientProfile() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        if (!user?.id) return;
-        const res = await apiFetch(`/patient/profile?patientId=${user.id}`);
-        if (res.status === 'success') {
-          setProfile(res.data);
+        const patientsRes = await apiFetch('/patients');
+        const currentPatient = patientsRes.data?.find((p: any) => p.user?.username === user?.username);
+        
+        if (currentPatient) {
+          const res = await apiFetch(`/patient/profile?patientId=${currentPatient.id}`);
+          if (res.status === 'success') {
+            setProfile(res.data);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch profile:", error);
@@ -26,7 +30,7 @@ export default function PatientProfile() {
       }
     }
     fetchProfile();
-  }, [user?.id]);
+  }, [user?.username]);
 
   if (loading || !profile) return (
     <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">

@@ -12,11 +12,16 @@ export default function PatientRecords() {
   useEffect(() => {
     async function fetchNotes() {
       try {
-        if (!user?.id) return;
-        const res = await apiFetch(`/doctor/notes?patientId=${user.id}`);
-        if (res.status === 'success') {
-          // Filter out private notes for safety (mocked as non-existent field for now)
-          setNotes(res.data || []);
+        const patientsRes = await apiFetch('/patients');
+        const currentPatient = patientsRes.data?.find((p: any) => p.user?.username === user?.username);
+        
+        if (currentPatient) {
+          const res = await apiFetch(`/doctor/notes?patientId=${currentPatient.id}`);
+          if (res.status === 'success') {
+            // Filter out private notes for safety
+            const publicNotes = (res.data || []).filter((n: any) => !n.isPrivate);
+            setNotes(publicNotes);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch clinical records:", error);
@@ -25,7 +30,7 @@ export default function PatientRecords() {
       }
     }
     fetchNotes();
-  }, [user?.id]);
+  }, [user?.username]);
 
   if (loading) return (
     <div className="space-y-6">

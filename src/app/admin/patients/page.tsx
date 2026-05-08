@@ -32,20 +32,24 @@ export default function AdminPatients() {
     username: '',
     password: '',
     wardId: '',
+    doctorId: '',
     status: 'outpatient'
   });
 
   const [patientsList, setPatientsList] = useState<any[]>([]);
   const [wards, setWards] = useState<any[]>([]);
+  const [doctors, setDoctors] = useState<any[]>([]);
 
   const fetchData = async () => {
     try {
-      const [patRes, wardRes] = await Promise.all([
+      const [patRes, wardRes, docRes] = await Promise.all([
         apiFetch('/patients'),
-        apiFetch('/wards')
+        apiFetch('/wards'),
+        apiFetch('/doctors')
       ]);
       if (patRes.status === 'success') setPatientsList(patRes.data || []);
       if (wardRes.status === 'success') setWards(wardRes.data || []);
+      if (docRes.status === 'success') setDoctors(docRes.data || []);
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     } finally {
@@ -62,7 +66,8 @@ export default function AdminPatients() {
     setForm({ 
       id: '', name: '', firstName: '', lastName: '', dob: '', 
       gender: 'Male', contact: '', email: '', address: '', 
-      blood_type: 'O+', insurance: 'None', username: '', password: '', wardId: '', status: 'outpatient'
+      blood_type: 'O+', insurance: 'None', username: '', password: '', 
+      wardId: '', doctorId: '', status: 'outpatient'
     });
     setModalOpen(true);
   };
@@ -85,6 +90,7 @@ export default function AdminPatients() {
       username: patient.user?.username || '',
       password: '',
       wardId: patient.ward?.id || '',
+      doctorId: patient.assignedDoctor?.id || '',
       status: patient.status || 'outpatient'
     });
     setModalOpen(true);
@@ -118,7 +124,8 @@ export default function AdminPatients() {
         status: form.status,
         username: form.username,
         password: form.password,
-        wardId: form.wardId
+        wardId: form.wardId,
+        doctorId: form.doctorId
       };
 
       const res = await apiFetch('/patients', {
@@ -172,7 +179,9 @@ export default function AdminPatients() {
             <tr key={p.id} className="hover:bg-slate-50 transition-colors cursor-pointer group border-b border-slate-100 last:border-0" onClick={() => setSelectedPatient(p)}>
               <td className="px-5 py-3 text-sm text-slate-400 font-mono italic">#{p.id}</td>
               <td className="px-5 py-3 text-sm font-bold text-slate-800 group-hover:text-blue-600">{p.name}</td>
-              <td className="px-5 py-3 text-sm text-slate-600 font-bold">{p.ward?.name || 'OUTPATIENT'}</td>
+              <td className="px-5 py-3 text-sm text-slate-600 font-bold">{p.gender}</td>
+              <td className="px-5 py-3 text-sm text-slate-600 font-medium">{p.ward?.name || 'OUTPATIENT'}</td>
+              <td className="px-5 py-3 text-sm text-slate-600 font-medium">{p.assignedDoctor?.name || 'Unassigned'}</td>
               <td className="px-5 py-3 text-sm"><Badge status={p.status}>{p.status}</Badge></td>
               <td className="px-5 py-3 text-sm text-right">
                 <div className="flex justify-end">
@@ -223,6 +232,10 @@ export default function AdminPatients() {
               <div className="flex flex-col gap-1">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Communication Link</span>
                 <span className="text-sm text-slate-800 font-bold">{selectedPatient.contact || 'N/A'}</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Assigned Clinician</span>
+                <span className="text-sm text-slate-800 font-bold">{selectedPatient.assignedDoctor?.name || 'Unassigned'}</span>
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Current Status</span>
@@ -281,6 +294,17 @@ export default function AdminPatients() {
                 ]} 
                 value={form.status} 
                 onChange={e => setForm({ ...form, status: e.target.value })} 
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <Input 
+                label="Assigned Doctor" 
+                options={[
+                  { value: '', label: 'Unassigned' },
+                  ...doctors.map(d => ({ value: d.id, label: d.name }))
+                ]} 
+                value={form.doctorId} 
+                onChange={e => setForm({ ...form, doctorId: e.target.value })} 
               />
             </div>
             <div className="grid grid-cols-2 gap-4">

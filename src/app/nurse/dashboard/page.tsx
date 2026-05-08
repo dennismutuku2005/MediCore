@@ -35,7 +35,7 @@ export default function NurseDashboard() {
             totalAssigned: patients.length,
             pendingTasks: tasks.filter((t: any) => t.column !== 'Completed').length,
             medsDue: tasks.filter((t: any) => t.description.toLowerCase().includes('med') || t.description.toLowerCase().includes('pill')).length,
-            availableBeds: wards.reduce((acc: number, w: any) => acc + (w.availableBeds || 0), 0)
+            availableBeds: wards.reduce((acc: number, w: any) => acc + (Number(w.available) || (Number(w.capacity) - Number(w.occupied)) || 0), 0)
           });
         }
       } catch (error) {

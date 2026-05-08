@@ -15,7 +15,7 @@ export default function LabtechInventory() {
 
   const fetchData = async () => {
     try {
-      const res = await apiFetch('/inventory');
+      const res = await apiFetch('/labtech/inventory');
       if (res.status === 'success') {
         setItems(res.data || []);
       }
@@ -33,18 +33,14 @@ export default function LabtechInventory() {
   const handleUpdate = async (item: any, newQty: number) => {
     setUpdatingId(item.id);
     try {
-      // Determine status based on quantity
-      let status = 'instock';
-      if (newQty === 0) status = 'out';
-      else if (newQty < 10) status = 'low';
-
-      await apiFetch('/inventory', {
+      await apiFetch('/labtech/inventory/sync', {
         method: 'POST',
-        body: JSON.stringify({ ...item, quantity: newQty, status })
+        body: JSON.stringify({ id: item.id, quantity: newQty })
       });
+      toast.success("Stock levels synchronized with laboratory registry");
       await fetchData();
     } catch (error) {
-      toast.error("Failed to update inventory.");
+      toast.error("Failed to synchronize inventory levels.");
     } finally {
       setUpdatingId(null);
     }

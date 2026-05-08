@@ -5,9 +5,10 @@ interface BadgeProps {
   key?: React.Key;
   status: string;
   children?: React.ReactNode;
+  className?: string;
 }
 
-export default function Badge({ status, children }: BadgeProps) {
+export default function Badge({ status, children, className }: BadgeProps) {
   const getColors = (s: string) => {
     const low = s.toLowerCase();
     if (['active', 'completed', 'confirmed', 'paid', 'instock', 'normal'].includes(low)) return 'bg-emerald-50 text-emerald-700 border-emerald-200';
@@ -18,7 +19,7 @@ export default function Badge({ status, children }: BadgeProps) {
   };
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border ${getColors(status)} uppercase tracking-wider`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border ${getColors(status)} uppercase tracking-wider ${className || ''}`}>
       {children || status}
     </span>
   );

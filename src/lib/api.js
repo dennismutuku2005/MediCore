@@ -25,6 +25,16 @@ export async function apiFetch(endpoint, options = {}) {
             headers,
         });
 
+        if (response.status === 401) {
+            console.warn('[apiFetch] Session expired or unauthorized. Logging out.');
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('pace_auth_token');
+                localStorage.removeItem('pace_user_data');
+                window.location.href = '/login';
+            }
+            return null;
+        }
+
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             const message = errorData.message || `API error: ${response.status}`;
