@@ -31,6 +31,7 @@ const navConfig: any = {
     ]},
     { label: 'System', items: [
       { label: 'Users', href: '/admin/users', icon: <PersonIcon size={18} /> },
+      { label: 'System Logs', href: '/admin/logs', icon: <ClipboardIcon size={18} /> },
       { label: 'Reports', href: '/admin/reports', icon: <ReportIcon size={18} /> },
       { label: 'Settings', href: '/admin/settings', icon: <SettingsIcon size={18} /> },
     ]}
