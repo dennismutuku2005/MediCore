@@ -4,13 +4,24 @@ import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { apiFetch } from '@/lib/api';
-import { ClipboardIcon, SearchIcon, FilterIcon, LockIcon, MonitorIcon, ActivityIcon, PersonIcon } from '@/components/ui/Icons';
+import { 
+  ClipboardIcon, SearchIcon, FilterIcon, LockIcon, MonitorIcon, 
+  ActivityIcon, PersonIcon, FlaskIcon, PillIcon, DollarIcon, 
+  SettingsIcon, ReportIcon, QueueIcon, BedIcon 
+} from '@/components/ui/Icons';
 
 const ICON_MAP: Record<string, any> = {
   LockIcon: <LockIcon size={14} className="text-amber-500" />,
   MonitorIcon: <MonitorIcon size={14} className="text-blue-500" />,
   ActivityIcon: <ActivityIcon size={14} className="text-emerald-500" />,
-  PersonIcon: <PersonIcon size={14} className="text-slate-500" />,
+  PersonIcon: <PersonIcon size={14} className="text-indigo-500" />,
+  FlaskIcon: <FlaskIcon size={14} className="text-purple-500" />,
+  PillIcon: <PillIcon size={14} className="text-rose-500" />,
+  DollarIcon: <DollarIcon size={14} className="text-green-600" />,
+  SettingsIcon: <SettingsIcon size={14} className="text-slate-600" />,
+  ReportIcon: <ReportIcon size={14} className="text-cyan-600" />,
+  QueueIcon: <QueueIcon size={14} className="text-orange-500" />,
+  BedIcon: <BedIcon size={14} className="text-teal-600" />,
 };
 
 export default function SystemLogs() {
