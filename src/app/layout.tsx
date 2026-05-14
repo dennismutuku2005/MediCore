@@ -9,8 +9,12 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'MediCore HMS — Hospital Management System',
-  description: 'Streamlined care, simplified. A comprehensive hospital management system for healthcare professionals.',
+  title: {
+    default: 'MediCore | Advanced Clinical Intelligence & Hospital Management',
+    template: '%s | MediCore'
+  },
+  description: 'Enterprise-grade clinical management platform for real-time patient monitoring, digital health records, and institutional audit transparency.',
+  keywords: ['Healthcare Information System', 'Hospital Management', 'Clinical Audit', 'Patient Records', 'MediCore'],
   icons: {
     icon: '/logoicon.png',
   },
