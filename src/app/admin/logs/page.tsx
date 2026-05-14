@@ -4,7 +4,14 @@ import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { apiFetch } from '@/lib/api';
-import { ClipboardIcon, SearchIcon, FilterIcon } from '@/components/ui/Icons';
+import { ClipboardIcon, SearchIcon, FilterIcon, LockIcon, MonitorIcon, ActivityIcon, PersonIcon } from '@/components/ui/Icons';
+
+const ICON_MAP: Record<string, any> = {
+  LockIcon: <LockIcon size={14} className="text-amber-500" />,
+  MonitorIcon: <MonitorIcon size={14} className="text-blue-500" />,
+  ActivityIcon: <ActivityIcon size={14} className="text-emerald-500" />,
+  PersonIcon: <PersonIcon size={14} className="text-slate-500" />,
+};
 
 export default function SystemLogs() {
   const [loading, setLoading] = useState(true);
@@ -79,8 +86,10 @@ export default function SystemLogs() {
                 </td>
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <span className="text-[11px] font-medium text-slate-700">{a.icon || 'General'}</span>
+                    {ICON_MAP[a.icon] || <ActivityIcon size={14} className="text-slate-400" />}
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                      {a.icon?.replace('Icon', '') || 'Event'}
+                    </span>
                   </div>
                 </td>
                 <td className="px-5 py-3 text-xs text-slate-700 font-medium">
