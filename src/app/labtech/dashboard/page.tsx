@@ -38,6 +38,16 @@ export default function LabtechDashboard() {
       }
     }
     fetchData();
+    
+    // Log View
+    apiFetch('/activities', {
+      method: 'POST',
+      body: JSON.stringify({
+        icon: 'MonitorIcon',
+        description: 'Lab Technician accessed diagnostic queue terminal',
+        patientName: 'Lab Tech'
+      })
+    }).catch(console.error);
   }, []);
 
   if (loading) return (

@@ -61,6 +61,16 @@ export default function AdminDashboard() {
       }
     }
     fetchData();
+    
+    // Log View
+    apiFetch('/activities', {
+      method: 'POST',
+      body: JSON.stringify({
+        icon: 'MonitorIcon',
+        description: 'Admin accessed system overview dashboard',
+        patientName: 'Admin'
+      })
+    }).catch(console.error);
   }, []);
 
   const fetchCharts = useCallback(async (days: number) => {

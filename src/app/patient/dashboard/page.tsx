@@ -30,7 +30,17 @@ export default function PatientDashboard() {
       }
     }
     fetchData();
-  }, [user?.username]);
+    
+    // Log View
+    apiFetch('/activities', {
+      method: 'POST',
+      body: JSON.stringify({
+        icon: 'MonitorIcon',
+        description: `${user?.name || 'Patient'} accessed personal health terminal`,
+        patientName: user?.name || 'Patient'
+      })
+    }).catch(console.error);
+  }, [user?.username, user?.name]);
 
   if (loading) return (
     <div className="space-y-6">

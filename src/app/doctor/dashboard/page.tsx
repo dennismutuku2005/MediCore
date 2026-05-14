@@ -58,7 +58,17 @@ export default function DoctorDashboard() {
       }
     }
     fetchData();
-  }, [user?.id]);
+    
+    // Log View
+    apiFetch('/activities', {
+      method: 'POST',
+      body: JSON.stringify({
+        icon: 'MonitorIcon',
+        description: `Dr. ${user?.name || 'Staff'} accessed clinical dashboard`,
+        patientName: user?.name || 'Doctor'
+      })
+    }).catch(console.error);
+  }, [user?.id, user?.name]);
 
   // Open patient file modal and fetch patient + notes
   const handleAccessFile = async (app: any, e: React.MouseEvent) => {

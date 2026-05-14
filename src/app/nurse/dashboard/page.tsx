@@ -45,7 +45,17 @@ export default function NurseDashboard() {
       }
     }
     fetchData();
-  }, [user?.id]);
+    
+    // Log View
+    apiFetch('/activities', {
+      method: 'POST',
+      body: JSON.stringify({
+        icon: 'MonitorIcon',
+        description: `Nurse ${user?.name || 'Staff'} accessed ward care dashboard`,
+        patientName: user?.name || 'Nurse'
+      })
+    }).catch(console.error);
+  }, [user?.id, user?.name]);
 
   if (loading) return (
     <div className="space-y-6">
