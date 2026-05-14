@@ -139,7 +139,7 @@ export default function AdminDoctors() {
         </div>
         <Button onClick={handleOpenAdd} className="h-10">
           <PlusIcon size={16} /> 
-          <span className="ml-1">Add Medical Professional</span>
+          <span className="ml-1 text-[11px] font-bold uppercase tracking-wider">Register New Practitioner</span>
         </Button>
       </div>
 
@@ -173,8 +173,8 @@ export default function AdminDoctors() {
         )}
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingDoc ? "Edit Clinician Profile" : "Add New Clinician"}
-        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button loading={saving} onClick={handleSave}>{editingDoc ? "Update Records" : "Save Professional"}</Button></>}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingDoc ? "Modify Practitioner Profile" : "Register New Practitioner"}
+        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button loading={saving} onClick={handleSave}>{editingDoc ? "Update Medical Records" : "Register Clinician"}</Button></>}>
         <div className="space-y-4 py-2">
           <Input label="Full Medical Name" placeholder="e.g. Dr. Jane Smith" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
           <Input label="Professional Email" type="email" placeholder="jane.smith@medicore.ke" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />

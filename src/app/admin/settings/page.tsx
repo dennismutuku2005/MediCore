@@ -99,7 +99,7 @@ export default function AdminSettings() {
             />
           </div>
           <div className="pt-4 flex justify-end">
-            <Button loading={saving} onClick={handleSave} className="h-10 px-8 text-[11px] font-black uppercase tracking-widest">Commit Changes</Button>
+            <Button loading={saving} onClick={handleSave} className="h-10 px-8 text-[11px] font-black uppercase tracking-widest">Update Facility Configuration</Button>
           </div>
         </div>
       </div>

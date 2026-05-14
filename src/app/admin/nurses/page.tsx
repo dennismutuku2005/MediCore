@@ -127,9 +127,9 @@ export default function AdminNurses() {
             onChange={e => setSearch(e.target.value)} 
           />
         </div>
-        <Button onClick={handleOpenAdd} className="h-10 text-[11px]">
+        <Button onClick={handleOpenAdd} className="h-10 text-[11px] font-bold uppercase tracking-wider">
           <PlusIcon size={14} /> 
-          <span className="ml-2">Add</span>
+          <span className="ml-2">Register Nursing Staff</span>
         </Button>
       </div>
 
@@ -162,8 +162,8 @@ export default function AdminNurses() {
         )}
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingNurse ? "Update" : "Add"}
-        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button loading={saving} onClick={handleSave}>Save</Button></>}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingNurse ? "Modify Nursing Profile" : "Register Staff Member"}
+        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button loading={saving} onClick={handleSave}>{editingNurse ? "Update Profile" : "Confirm Registration"}</Button></>}>
         <div className="space-y-4 py-2">
           <Input label="Full Legal Name" placeholder="e.g. Patricia Wanjiku" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
           <div className="grid grid-cols-2 gap-4">

@@ -130,8 +130,8 @@ export default function AdminWards() {
         ))}
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Provision Clinical Ward"
-        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Abort interface</Button><Button loading={saving} onClick={handleSave}>Commit Infrastructure</Button></>}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Register Clinical Ward"
+        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button loading={saving} onClick={handleSave}>Confirm Registration</Button></>}>
         <div className="space-y-4 py-2">
           <Input label="Ward Denomination" placeholder="e.g. Ward C or Pediatric Wing" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
           <Input label="Bed Capacity" type="number" placeholder="20" value={form.capacity} onChange={e => setForm({...form, capacity: parseInt(e.target.value)})} />
