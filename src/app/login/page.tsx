@@ -107,7 +107,7 @@ export default function Login() {
           )}
 
           <div className="text-right">
-            <a href="/forgot-password" summerized="true" className="text-xs font-medium text-blue-600 hover:underline">Forgot access key?</a>
+            <a href="/forgot-password" className="text-xs font-medium text-blue-600 hover:underline">Forgot access key?</a>
           </div>
 
           <Button fullWidth loading={loading} className="h-10 text-base">
