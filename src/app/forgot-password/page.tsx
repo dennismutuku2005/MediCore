@@ -80,10 +80,7 @@ export default function ForgotPassword() {
             </form>
           </>
         ) : (
-          <div className="text-center space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto border border-blue-100 text-blue-600 shadow-inner">
-               <PersonIcon size={32} />
-            </div>
+          <div className="text-center space-y-6 animate-in slide-in-from-bottom-4 duration-500 pt-4">
             
             <div>
               <h2 className="text-lg font-bold text-slate-800">Dispatch Successful</h2>
