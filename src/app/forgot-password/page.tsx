@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { PersonIcon, WhatsAppIcon, ArrowLeftIcon } from '@/components/ui/Icons';
+import { PersonIcon, ArrowLeftIcon } from '@/components/ui/Icons';
 import Image from 'next/image';
 import { apiFetch } from '@/lib/api';
 
@@ -11,6 +11,7 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [maskedPhone, setMaskedPhone] = useState('');
+  const [error, setError] = useState('');
 
   const handleResetRequest = async (e: React.FormEvent) => {
     e.preventDefault();
