@@ -5,8 +5,8 @@
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
-const TOKEN_KEY = 'pace_auth_token';
-const USER_KEY  = 'pace_user_data';
+const TOKEN_KEY = 'medical_auth_token';
+const USER_KEY  = 'medical_user_data';
 
 export interface UserData {
   id:       number;

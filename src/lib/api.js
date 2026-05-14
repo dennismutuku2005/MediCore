@@ -7,7 +7,7 @@ import { API_BASE } from '@/lib/api-config';
  */
 export async function apiFetch(endpoint, options = {}) {
     const token = typeof window !== 'undefined'
-        ? localStorage.getItem('pace_auth_token')
+        ? localStorage.getItem('medical_auth_token')
         : null;
 
     const headers = {
@@ -28,8 +28,8 @@ export async function apiFetch(endpoint, options = {}) {
         if (response.status === 401) {
             console.warn('[apiFetch] Session expired or unauthorized. Logging out.');
             if (typeof window !== 'undefined') {
-                localStorage.removeItem('pace_auth_token');
-                localStorage.removeItem('pace_user_data');
+                localStorage.removeItem('medical_auth_token');
+                localStorage.removeItem('medical_user_data');
                 window.location.href = '/login';
             }
             return null;

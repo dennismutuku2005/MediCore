@@ -7,8 +7,8 @@ import { API_BASE } from './api-config';
 
 class AuthService {
   constructor() {
-    this.tokenKey = 'pace_auth_token';
-    this.userKey = 'pace_user_data';
+    this.tokenKey = 'medical_auth_token';
+    this.userKey = 'medical_user_data';
   }
 
   /**
