@@ -110,12 +110,12 @@ export default function AdminDashboard() {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight">System Overview</h1>
-          <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-0.5">Real-time Operations Dashboard</p>
+          <h1 className="text-xl font-bold text-slate-800 tracking-tight">System overview</h1>
+          <p className="text-slate-400 text-[11px] font-medium mt-0.5">Real-time operations dashboard</p>
         </div>
         <div className="flex items-center gap-2 bg-slate-100/50 px-3 py-1.5 rounded border border-slate-200">
-          <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Live: {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+          <span className="text-[11px] font-medium text-slate-500">Live: {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
         </div>
       </div>
 
@@ -133,8 +133,8 @@ export default function AdminDashboard() {
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded shadow-sm overflow-hidden flex flex-col">
           <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest text-[11px]">Admissions Overview</h3>
-              <p className="text-slate-400 text-[9px] font-bold uppercase tracking-wider mt-0.5">Historical Growth Trend</p>
+              <h3 className="text-sm font-semibold text-slate-800">Admissions overview</h3>
+              <p className="text-slate-400 text-[11px] font-medium mt-0.5">Historical growth trend</p>
             </div>
             <div className="flex gap-1">
                 {[7, 30].map(d => (
@@ -142,9 +142,9 @@ export default function AdminDashboard() {
                         key={d} 
                         onClick={() => setTimeRange(d)}
                         disabled={fetchingCharts}
-                        className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider transition-all ${timeRange === d ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:bg-slate-100 disabled:opacity-50'}`}
+                        className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${timeRange === d ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:bg-slate-100 disabled:opacity-50'}`}
                     >
-                        {d} Days
+                        {d} days
                     </button>
                 ))}
             </div>
@@ -159,8 +159,8 @@ export default function AdminDashboard() {
         {/* Recent Activity Feed */}
         <div className="bg-white border border-slate-200 rounded shadow-sm overflow-hidden flex flex-col">
           <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
-            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest text-[11px]">Recent Activity</h3>
-            <p className="text-slate-400 text-[9px] font-bold uppercase tracking-wider mt-0.5">System Audit Logs</p>
+            <h3 className="text-sm font-semibold text-slate-800">Recent activity</h3>
+            <p className="text-slate-400 text-[11px] font-medium mt-0.5">System audit logs</p>
           </div>
           <div className="flex-1 px-5 py-4 overflow-y-auto max-h-[350px] space-y-4">
             {recentActivities.length > 0 ? recentActivities.map((act: any, i) => (
@@ -169,15 +169,15 @@ export default function AdminDashboard() {
                 <div className="flex-1">
                   <p className="text-xs font-bold text-slate-700 leading-snug">{act.description}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">{act.patientName || 'Admin'}</span>
-                    <span className="text-[9px] font-bold text-blue-500 uppercase">{new Date(act.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="text-[11px] font-medium text-slate-400">{act.patientName || 'Admin'}</span>
+                    <span className="text-[11px] font-medium text-blue-500">{new Date(act.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                 </div>
               </div>
             )) : (
               <div className="h-full flex flex-col items-center justify-center text-slate-300 py-10">
                 <ActivityIcon size={32} className="opacity-20 mb-2" />
-                <span className="text-[9px] font-bold uppercase tracking-widest">No audit logs found</span>
+                <span className="text-[11px] font-medium">No audit logs found</span>
               </div>
             )}
           </div>
@@ -188,8 +188,8 @@ export default function AdminDashboard() {
       <div className="bg-white border border-slate-200 rounded shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
             <div>
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest text-[11px]">Scheduled Appointments</h3>
-                <p className="text-slate-400 text-[9px] font-bold uppercase tracking-wider mt-0.5">Daily Clinical Queue</p>
+                <h3 className="text-sm font-semibold text-slate-800">Scheduled appointments</h3>
+                <p className="text-slate-400 text-[11px] font-medium mt-0.5">Daily clinical queue</p>
             </div>
             <Badge status="info">LIVE FEED</Badge>
         </div>
@@ -202,11 +202,11 @@ export default function AdminDashboard() {
                   <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600">{app.patient?.name || app.patient}</span>
                 </td>
                 <td className="px-5 py-3 text-sm text-slate-600 font-medium">{app.doctor?.name || app.doctor}</td>
-                <td className="px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">{app.department}</td>
+                <td className="px-5 py-3 text-[11px] font-medium text-slate-500">{app.department}</td>
                 <td className="px-5 py-3">
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-700">{app.time}</span>
-                    <span className="text-[9px] text-slate-400 uppercase font-bold">{app.date}</span>
+                    <span className="text-xs font-semibold text-slate-700">{app.time}</span>
+                    <span className="text-[11px] text-slate-400 font-medium">{app.date}</span>
                   </div>
                 </td>
                 <td className="px-5 py-3"><Badge status={app.status} /></td>
@@ -215,7 +215,7 @@ export default function AdminDashboard() {
             {appointments.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-8 py-10 text-center">
-                  <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">No active sessions</span>
+                  <span className="text-[11px] font-medium text-slate-300">No active sessions</span>
                 </td>
               </tr>
             )}

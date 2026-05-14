@@ -103,7 +103,7 @@ export default function Sidebar({ role, currentPath, isOpen, onClose }: any) {
         <nav className="flex-1 overflow-y-auto p-3 space-y-6">
           {sections.map((section: any, idx: number) => (
             <div key={idx}>
-              <div className="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{section.label}</div>
+              <div className="px-3 mb-2 text-[11px] font-medium text-slate-400 tracking-wide">{section.label}</div>
               <div className="space-y-0.5">
                 {section.items.map((item: any) => {
                   const isActive = currentPath === item.href;

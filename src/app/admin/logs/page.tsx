@@ -98,7 +98,7 @@ export default function SystemLogs() {
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-2">
                     {ICON_MAP[a.icon] || <ActivityIcon size={14} className="text-slate-400" />}
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                    <span className="text-[11px] font-medium text-slate-400">
                       {a.icon?.replace('Icon', '') || 'Event'}
                     </span>
                   </div>

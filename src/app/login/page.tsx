@@ -66,7 +66,7 @@ export default function Login() {
           <div className="flex items-center gap-3 mb-2">
             <Image src="/logo.png" alt="MediCore Logo" width={180} height={50} className="object-contain" priority />
           </div>
-          <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-2">Hospital System</p>
+          <p className="text-sm font-medium text-slate-400 mt-2">Hospital management system</p>
         </div>
         
         <div className="text-center mb-8">
@@ -107,7 +107,7 @@ export default function Login() {
           )}
 
           <div className="text-right">
-            <a href="/forgot-password" className="text-xs font-bold text-blue-600 hover:underline">Forgot access key?</a>
+            <a href="/forgot-password" summerized="true" className="text-xs font-medium text-blue-600 hover:underline">Forgot access key?</a>
           </div>
 
           <Button fullWidth loading={loading} className="h-10 text-base">

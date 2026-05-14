@@ -63,7 +63,7 @@ export default function ResetPassword() {
       <div className="w-full max-w-[400px] bg-white border border-slate-200 rounded p-10 shadow-sm animate-in fade-in zoom-in duration-300">
         <div className="flex flex-col items-center mb-10">
           <Image src="/logo.png" alt="MediCore Logo" width={180} height={50} className="object-contain" priority />
-          <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-2">Security Key Reset</p>
+          <p className="text-sm font-medium text-slate-400 mt-2">Security key reset</p>
         </div>
 
         {!success ? (

@@ -42,7 +42,7 @@ export default function ForgotPassword() {
       <div className="w-full max-w-[400px] bg-white border border-slate-200 rounded p-10 shadow-sm animate-in fade-in zoom-in duration-300">
         <div className="flex flex-col items-center mb-8">
           <Image src="/logo.png" alt="MediCore Logo" width={180} height={50} className="object-contain" priority />
-          <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-2">Access Recovery</p>
+          <p className="text-sm font-medium text-slate-400 mt-2">Access recovery</p>
         </div>
 
         {!success ? (
@@ -62,7 +62,7 @@ export default function ForgotPassword() {
               />
 
               {error && (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded text-[10px] font-bold text-rose-600 text-center uppercase tracking-wider">
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded text-[11px] font-medium text-rose-600 text-center">
                   {error}
                 </div>
               )}
@@ -96,7 +96,7 @@ export default function ForgotPassword() {
                 <span className="text-lg font-black text-slate-700 tracking-[0.2em]">{maskedPhone}</span>
             </div>
 
-            <div className="p-4 bg-blue-50/50 border border-blue-100 rounded text-[10px] text-blue-600 font-bold leading-relaxed uppercase tracking-wider">
+            <div className="p-4 bg-blue-50/50 border border-blue-100 rounded text-[11px] text-blue-600 font-medium leading-relaxed">
                Please check your WhatsApp messages for the secure access key.
             </div>
 
@@ -104,7 +104,7 @@ export default function ForgotPassword() {
                Return to Secure Login
             </Button>
 
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest pt-2">
+            <p className="text-[11px] text-slate-400 font-medium pt-2">
               Security link valid for 60 minutes
             </p>
           </div>
