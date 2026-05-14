@@ -10,8 +10,7 @@ export default function ForgotPassword() {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [resetLink, setResetLink] = useState('');
-  const [error, setError] = useState('');
+  const [maskedPhone, setMaskedPhone] = useState('');
 
   const handleResetRequest = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +25,7 @@ export default function ForgotPassword() {
 
       if (res.status === 'success') {
         setSuccess(true);
-        setResetLink(res.resetLink);
+        setMaskedPhone(res.phone || '********');
       } else {
         setError(res.message || 'Verification failed. User not recognized.');
       }
@@ -35,11 +34,6 @@ export default function ForgotPassword() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const shareToWhatsApp = () => {
-    const text = `MediCore Clinical Access Recovery:\n\nA password reset has been initiated for your account.\n\nPlease click the link below to set a new access key:\n${resetLink}\n\nNote: This link expires in 1 hour.`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   return (
@@ -73,7 +67,7 @@ export default function ForgotPassword() {
               )}
 
               <Button fullWidth loading={loading} className="h-11">
-                Generate Reset Token
+                Dispatch Reset Token
               </Button>
 
               <div className="text-center pt-2">
@@ -86,28 +80,31 @@ export default function ForgotPassword() {
           </>
         ) : (
           <div className="text-center space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-            <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto border border-emerald-100 text-emerald-600 shadow-inner">
-               <WhatsAppIcon size={32} />
+            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto border border-blue-100 text-blue-600 shadow-inner">
+               <PersonIcon size={32} />
             </div>
             
             <div>
-              <h2 className="text-lg font-bold text-slate-800">Token Generated</h2>
+              <h2 className="text-lg font-bold text-slate-800">Dispatch Successful</h2>
               <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                A secure reset token has been verified for <span className="font-bold text-slate-900">{username}</span>.
+                A private clinical recovery link has been dispatched to the registered mobile device:
               </p>
             </div>
 
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded text-[10px] break-all font-mono text-slate-600">
-              {resetLink}
+            <div className="py-4 px-6 bg-slate-50 border border-slate-100 rounded-lg">
+                <span className="text-lg font-black text-slate-700 tracking-[0.2em]">{maskedPhone}</span>
             </div>
 
-            <Button fullWidth onClick={shareToWhatsApp} className="h-11 bg-emerald-600 hover:bg-emerald-700 border-emerald-700 shadow-lg shadow-emerald-600/20">
-               <WhatsAppIcon size={18} className="mr-2" />
-               Forward to WhatsApp
+            <div className="p-4 bg-blue-50/50 border border-blue-100 rounded text-[10px] text-blue-600 font-bold leading-relaxed uppercase tracking-wider">
+               Please check your WhatsApp messages for the secure access key.
+            </div>
+
+            <Button fullWidth onClick={() => window.location.href = '/login'} variant="secondary" className="h-11">
+               Return to Secure Login
             </Button>
 
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest pt-2">
-              Valid for exactly 60 minutes
+              Security link valid for 60 minutes
             </p>
           </div>
         )}
