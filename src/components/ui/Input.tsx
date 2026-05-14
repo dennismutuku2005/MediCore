@@ -18,7 +18,7 @@ export default function Input({ label, error, icon, suffix, isTextarea, options,
 
   return (
     <div className="flex flex-col gap-1 w-full">
-      {label && <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{label}</label>}
+      {label && <label className="text-[11px] font-medium text-slate-500">{label}</label>}
       
       <div className="relative">
         {icon && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">{icon}</span>}

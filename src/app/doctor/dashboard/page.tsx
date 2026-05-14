@@ -133,31 +133,31 @@ export default function DoctorDashboard() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <StatCard icon={<PatientsIcon size={20} />} label="Patient Workload" value={stats.patientWorkload} trend="active cases" trendUp />
-        <StatCard icon={<CalendarIcon size={20} />} label="Today's Sessions" value={stats.todaySessions} trend="Clinical queue" trendUp iconBg="#fef3c7" iconColor="#d97706" />
-        <StatCard icon={<ClipboardIcon size={20} />} label="Pending Notes" value={stats.pendingNotes} trend="Action required" trendUp={false} iconBg="#fee2e2" iconColor="#dc2626" />
-        <StatCard icon={<ActivityIcon size={20} />} label="Lab Reviews" value={stats.labReviews} trend="New results" trendUp iconBg="#ecfdf5" iconColor="#059669" />
+        <StatCard icon={<PatientsIcon size={20} />} label="Patients" value={stats.patientWorkload} trend="active cases" trendUp />
+        <StatCard icon={<CalendarIcon size={20} />} label="Today's sessions" value={stats.todaySessions} trend="Clinical queue" trendUp iconBg="#fef3c7" iconColor="#d97706" />
+        <StatCard icon={<ClipboardIcon size={20} />} label="Pending notes" value={stats.pendingNotes} trend="Action required" trendUp={false} iconBg="#fee2e2" iconColor="#dc2626" />
+        <StatCard icon={<ActivityIcon size={20} />} label="Lab reviews" value={stats.labReviews} trend="New results" trendUp iconBg="#ecfdf5" iconColor="#059669" />
       </div>
 
       <div className="bg-white border border-slate-200 rounded shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
-          <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Upcoming Clinical Schedule</h3>
-          <Badge status="active">REAL-TIME</Badge>
+          <h3 className="text-[11px] font-medium text-slate-800">Upcoming schedule</h3>
+          <Badge status="active">Real-time</Badge>
         </div>
         <div className="overflow-x-auto">
           <Table headers={['Time-Slot', 'Patient Identity', 'Clinical Indication', 'Priority Status', 'Operational Action']}>
             {appointments.map((app: any) => (
               <tr key={app.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 font-medium">
-                <td className="px-5 py-3 text-sm font-black text-blue-600 tracking-tight italic">{app.time || app.appointmentTime}</td>
-                <td className="px-5 py-3 text-sm font-bold text-slate-800">{app.patient?.name || app.patient || 'Unknown'}</td>
-                <td className="px-5 py-3 text-sm text-slate-600 font-normal italic">{app.reason}</td>
+                <td className="px-5 py-3 text-sm font-medium text-blue-600 tracking-tight">{app.time || app.appointmentTime}</td>
+                <td className="px-5 py-3 text-sm font-medium text-slate-800">{app.patient?.name || app.patient || 'Unknown'}</td>
+                <td className="px-5 py-3 text-sm text-slate-600 font-normal">{app.reason}</td>
                 <td className="px-5 py-3 text-sm"><Badge status={app.status} /></td>
                 <td className="px-5 py-3 text-sm">
                   <button
                     onClick={(e) => handleAccessFile(app, e)}
-                    className="px-3 h-8 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold text-slate-600 uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                    className="px-3 h-8 bg-slate-100 border border-slate-200 rounded text-[10px] font-medium text-slate-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                   >
-                    Access File
+                    Open
                   </button>
                 </td>
               </tr>
@@ -175,8 +175,8 @@ export default function DoctorDashboard() {
       <Modal
         open={!!selectedApp}
         onClose={closeModal}
-        title={`Clinical File — ${patientName}`}
-        footer={<Button variant="secondary" onClick={closeModal}>Close File</Button>}
+        title={`Clinical file — ${patientName}`}
+        footer={<Button variant="secondary" onClick={closeModal}>Close</Button>}
       >
         {fileLoading ? (
           <div className="space-y-4 py-4">
@@ -190,12 +190,12 @@ export default function DoctorDashboard() {
 
             {/* Appointment Info */}
             <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-100 rounded">
-              <div className="w-12 h-12 rounded bg-blue-600 flex items-center justify-center text-white font-black text-lg shadow">
+              <div className="w-12 h-12 rounded bg-blue-600 flex items-center justify-center text-white font-medium text-lg shadow">
                 {patientName.charAt(0).toUpperCase()}
               </div>
               <div>
-                <div className="text-base font-black text-slate-900 tracking-tight">{patientName}</div>
-                <div className="flex items-center gap-2 mt-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <div className="text-base font-medium text-slate-900 tracking-tight">{patientName}</div>
+                <div className="flex items-center gap-2 mt-1 text-[10px] font-medium text-slate-400">
                   <ClockIcon size={12} />
                   <span>{selectedApp?.time || selectedApp?.appointmentTime || '—'}</span>
                   <span>•</span>
@@ -210,37 +210,37 @@ export default function DoctorDashboard() {
             {/* Patient Demographics */}
             {patientFile?.patient ? (
               <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-3">Patient Demographics</div>
+                <div className="text-[10px] font-medium text-slate-400 mb-3">Patient demographics</div>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { label: 'Gender', value: patientFile.patient.gender },
-                    { label: 'Blood Type', value: patientFile.patient.bloodType || 'N/A' },
+                    { label: 'Blood type', value: patientFile.patient.bloodType || 'N/A' },
                     { label: 'Status', value: patientFile.patient.status },
-                    { label: 'Patient ID', value: `#${patientFile.patient.id}` },
+                    { label: 'Patient id', value: `#${patientFile.patient.id}` },
                   ].map(({ label, value }) => (
                     <div key={label} className="bg-slate-50 p-3 rounded border border-slate-100">
-                      <div className="text-[10px] font-bold text-slate-400 uppercase">{label}</div>
-                      <div className="text-sm font-black text-slate-800 mt-0.5">{value || '—'}</div>
+                      <div className="text-[10px] font-medium text-slate-400">{label}</div>
+                      <div className="text-sm font-medium text-slate-800 mt-0.5">{value || '—'}</div>
                     </div>
                   ))}
                 </div>
               </div>
             ) : (
-              <div className="p-4 bg-amber-50 border border-amber-100 rounded text-xs font-bold text-amber-600 uppercase tracking-widest text-center">
+              <div className="p-4 bg-amber-50 border border-amber-100 rounded text-xs font-medium text-amber-600 text-center">
                 Patient demographics not found in assigned roster
               </div>
             )}
 
             {/* Clinical Notes */}
             <div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-3">
-                Clinical Notes ({patientFile?.notes?.length || 0})
+              <div className="text-[10px] font-medium text-slate-400 mb-3">
+                Clinical notes ({patientFile?.notes?.length || 0})
               </div>
               {patientFile?.notes?.length > 0 ? (
                 <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
                   {patientFile.notes.map((note: any) => (
                     <div key={note.id} className="bg-slate-50 border border-slate-100 rounded p-3">
-                      <div className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">
+                      <div className="text-[10px] font-medium text-blue-600 mb-1">
                         {note.noteDate
                           ? new Date(note.noteDate).toLocaleDateString()
                           : new Date(note.createdAt || note.date || Date.now()).toLocaleDateString()
@@ -251,7 +251,7 @@ export default function DoctorDashboard() {
                   ))}
                 </div>
               ) : (
-                <div className="p-6 bg-slate-50/60 border border-dashed border-slate-200 rounded text-center text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                <div className="p-6 bg-slate-50/60 border border-dashed border-slate-200 rounded text-center text-[10px] font-medium text-slate-300">
                   No clinical notes on record for this patient
                 </div>
               )}

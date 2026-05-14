@@ -16,6 +16,8 @@ export default function PatientAppointments() {
   const [form, setForm] = useState({ department: 'Internal Medicine', date: '', time: '', reason: '' });
   const [saving, setSaving] = useState(false);
   const [appts, setAppts] = useState<any[]>([]);
+  const [selectedAppt, setSelectedAppt] = useState<any>(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const user = authService.getUser();
 
   const fetchAppts = async () => {
@@ -84,8 +86,8 @@ export default function PatientAppointments() {
     <div className="animate-in fade-in duration-500">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-xl font-black text-slate-800 tracking-tight">Clinical Encounter History</h2>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Timeline of your medical interactions</p>
+          <h2 className="text-xl font-medium text-slate-800">Clinical encounter history</h2>
+          <p className="text-[10px] text-slate-400 mt-1">Timeline of your medical interactions</p>
         </div>
         <Button onClick={() => setModalOpen(true)} className="h-10">
           <PlusIcon size={16} /> 
@@ -99,23 +101,29 @@ export default function PatientAppointments() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-black text-slate-900 tracking-tight">{a.doctor?.name || a.doctor || 'Assigned Physician'}</span>
+                  <span className="text-sm font-medium text-slate-900">{a.doctor?.name || a.doctor || 'Assigned Physician'}</span>
                   <Badge status={a.status} />
                 </div>
-                <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{a.department || 'Clinical Department'} • {a.reason || 'General Consultation'}</div>
-                <div className="text-[11px] font-bold text-blue-600 mt-2 bg-blue-50/50 inline-block px-2 py-0.5 rounded border border-blue-100">
+                <div className="text-xs text-slate-500 font-medium">{a.department || 'Clinical department'} • {a.reason || 'General consultation'}</div>
+                <div className="text-[11px] text-blue-600 mt-2 bg-blue-50/50 inline-block px-2 py-0.5 rounded border border-blue-100">
                   {a.date || a.appointmentDate} at {a.time || a.appointmentTime}
                 </div>
               </div>
               
               <div className="flex items-center gap-2">
                 {a.status === 'pending' && (
-                  <button className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-rose-600 hover:bg-rose-50 transition-all rounded border border-slate-100">
-                    Cancel Request
+                  <button className="px-4 py-2 text-[10px] text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all rounded border border-slate-100">
+                    Cancel request
                   </button>
                 )}
-                <button className="px-4 py-2 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all rounded border border-blue-100">
-                  View Instructions
+                <button 
+                  onClick={() => {
+                    setSelectedAppt(a);
+                    setDetailsModalOpen(true);
+                  }}
+                  className="px-4 py-2 text-[10px] text-blue-600 hover:bg-blue-600 hover:text-white transition-all rounded border border-blue-100"
+                >
+                  Details
                 </button>
               </div>
             </div>
@@ -124,27 +132,69 @@ export default function PatientAppointments() {
 
         {appts.length === 0 && (
           <div className="p-16 text-center bg-white border border-slate-200 border-dashed rounded-lg">
-            <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">No scheduled encounters found</div>
+            <div className="text-sm text-slate-400">No scheduled encounters found</div>
             <p className="text-xs text-slate-400 mt-2">Request a consultation to begin your clinical journey.</p>
           </div>
         )}
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Request Clinical Encounter"
-        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Abort Request</Button><Button loading={saving} onClick={handleRequest}>Dispatch Signal</Button></>}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Request appointment"
+        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button loading={saving} onClick={handleRequest}>Save</Button></>}>
         <div className="space-y-4 py-2">
-          <Input label="Clinical Department" options={[
+          <Input label="Clinical department" options={[
             {value:'Internal Medicine',label:'Internal Medicine'},
             {value:'Pediatrics',label:'Pediatrics'},
             {value:'Surgery',label:'Surgery'},
             {value:'Cardiology',label:'Cardiology'}
           ]} value={form.department} onChange={e => setForm({...form, department: e.target.value})} />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Preferred Date" type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
-            <Input label="Preferred Time" type="time" value={form.time} onChange={e => setForm({...form, time: e.target.value})} />
+            <Input label="Preferred date" type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
+            <Input label="Preferred time" type="time" value={form.time} onChange={e => setForm({...form, time: e.target.value})} />
           </div>
-          <Input label="Clinical Reason" isTextarea placeholder="Briefly explain your medical concern..." value={form.reason} onChange={e => setForm({...form, reason: e.target.value})} />
+          <Input label="Clinical reason" isTextarea placeholder="Briefly explain your medical concern..." value={form.reason} onChange={e => setForm({...form, reason: e.target.value})} />
         </div>
+      </Modal>
+
+      <Modal open={detailsModalOpen} onClose={() => setDetailsModalOpen(false)} title="Appointment details"
+        footer={<Button onClick={() => setDetailsModalOpen(false)}>Close</Button>}>
+        {selectedAppt && (
+          <div className="space-y-6 py-2">
+            <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded">
+              <div>
+                <div className="text-[10px] text-slate-400 mb-1">Attending physician</div>
+                <div className="text-sm font-medium text-slate-900">{selectedAppt.doctor?.name || selectedAppt.doctor || 'Unassigned'}</div>
+              </div>
+              <Badge status={selectedAppt.status} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-slate-50 border border-slate-100 rounded">
+                <div className="text-[10px] text-slate-400 mb-1">Department</div>
+                <div className="text-xs font-medium text-slate-800">{selectedAppt.department || 'N/A'}</div>
+              </div>
+              <div className="p-3 bg-slate-50 border border-slate-100 rounded">
+                <div className="text-[10px] text-slate-400 mb-1">Schedule</div>
+                <div className="text-xs font-medium text-slate-800">{selectedAppt.date || selectedAppt.appointmentDate} at {selectedAppt.time || selectedAppt.appointmentTime}</div>
+              </div>
+            </div>
+
+            <div>
+              <div className="text-[10px] text-slate-400 mb-1">Reason for encounter</div>
+              <div className="p-4 bg-blue-50 border border-blue-100 rounded text-sm text-slate-700 font-medium leading-relaxed">
+                {selectedAppt.reason || 'General consultation'}
+              </div>
+            </div>
+
+            {selectedAppt.instructions && (
+              <div>
+                <div className="text-[10px] text-slate-400 mb-1">Provider instructions</div>
+                <div className="p-4 bg-amber-50 border border-amber-100 rounded text-sm text-slate-700 font-medium leading-relaxed">
+                  {selectedAppt.instructions}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </Modal>
     </div>
   );

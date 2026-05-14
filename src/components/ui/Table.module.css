@@ -19,7 +19,7 @@
   color: var(--text-secondary);
   font-weight: 700;
   border-bottom: 2px solid var(--border);
-  text-transform: uppercase;
+  /* Removed uppercase */
   font-size: 11px;
   letter-spacing: 0.5px;
 }

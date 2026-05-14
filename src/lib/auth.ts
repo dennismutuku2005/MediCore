@@ -126,6 +126,7 @@ export function roleRedirectPath(role: string | null | undefined): string {
     case 'doctor':  return '/doctor/dashboard';
     case 'nurse':   return '/nurse/dashboard';
     case 'labtech': return '/labtech/dashboard';
+    case 'patient': return '/patient/dashboard';
     default:        return '/dashboard';
   }
 }

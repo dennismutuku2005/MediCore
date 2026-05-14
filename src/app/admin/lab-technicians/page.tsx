@@ -116,9 +116,9 @@ export default function AdminLabTechs() {
             onChange={e => setSearch(e.target.value)} 
           />
         </div>
-        <Button onClick={handleOpenAdd} className="h-10 text-[11px] font-black uppercase tracking-widest">
+        <Button onClick={handleOpenAdd} className="h-10 text-[11px]">
           <PlusIcon size={14} /> 
-          <span className="ml-2">Enroll Lab Professional</span>
+          <span className="ml-2">Add</span>
         </Button>
       </div>
 
@@ -151,8 +151,8 @@ export default function AdminLabTechs() {
         )}
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingTech ? "Update Protocol: Lab Professional" : "Enrollment: Lab Professional"}
-        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Abort interface</Button><Button loading={saving} onClick={handleSave}>{editingTech ? "Commit Updates" : "Finalize Enrollment"}</Button></>}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingTech ? "Update" : "Add"}
+        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button loading={saving} onClick={handleSave}>{editingTech ? "Save" : "Save"}</Button></>}>
         <div className="space-y-4 py-2">
           <Input label="Staff Member Name" placeholder="e.g. John Doe" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
           <div className="grid grid-cols-2 gap-4">

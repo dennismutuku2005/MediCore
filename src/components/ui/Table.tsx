@@ -19,7 +19,7 @@ export default function Table({ headers, children, loading }: TableProps) {
         <thead>
           <tr className="bg-slate-50 border-b border-slate-200">
             {headers.map((h, i) => (
-              <th key={i} className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">{h}</th>
+              <th key={i} className="px-4 py-3 text-[11px] font-medium text-slate-500">{h}</th>
             ))}
           </tr>
         </thead>

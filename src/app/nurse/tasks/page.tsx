@@ -124,12 +124,12 @@ export default function NurseTasks() {
     <div className="animate-in fade-in duration-500 space-y-8">
       <div className="bg-gradient-to-r from-indigo-600 to-blue-700 text-white rounded-xl p-8 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Clinical Task Protocol</h2>
-          <p className="text-sm font-medium text-blue-100 opacity-80 mt-1">Patient care routines and status synchronization matrix</p>
+          <h2 className="text-2xl font-bold tracking-tight">Tasks</h2>
+          <p className="text-sm font-medium text-blue-100 opacity-80 mt-1">Patient care routines and status synchronization</p>
         </div>
         <Button onClick={() => setModalOpen(true)} className="bg-white text-blue-700 hover:bg-blue-50 border-none h-11 px-6 shadow-lg shadow-blue-900/20">
           <PlusIcon size={18} /> 
-          <span className="ml-2 font-bold">Initialize Protocol</span>
+          <span className="ml-2 font-bold">Add</span>
         </Button>
       </div>
 
@@ -139,7 +139,7 @@ export default function NurseTasks() {
           return (
             <div key={col.key} className="flex flex-col gap-4">
               <div className="flex items-center justify-between px-4 py-2 bg-slate-100 border border-slate-200 rounded-lg">
-                <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">{col.label}</span>
+                <span className="text-[10px] font-medium text-slate-600">{col.label}</span>
                 <span className="w-5 h-5 rounded-full bg-white flex items-center justify-center text-[10px] font-bold text-slate-400 border border-slate-200">{colTasks.length}</span>
               </div>
               
@@ -149,21 +149,21 @@ export default function NurseTasks() {
                     <div className={`absolute top-0 left-0 w-1 h-full ${t.priority === 'High' ? 'bg-rose-500' : t.priority === 'Medium' ? 'bg-amber-500' : 'bg-slate-300'}`} />
                     
                     <div className="flex justify-between items-start mb-3">
-                      <div className="text-sm font-black text-slate-800 tracking-tight">{t.patient || 'General Protocol'}</div>
+                      <div className="text-sm font-medium text-slate-800 tracking-tight">{t.patient || 'General Protocol'}</div>
                       <Badge status={t.priority} />
                     </div>
                     
                     <p className="text-xs text-slate-600 font-medium leading-relaxed mb-4">{t.description}</p>
                     
                     <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                      <div className="flex items-center gap-1.5 text-blue-600 font-mono text-[10px] font-bold">
-                        <span>DUE:</span> {t.dueTime || 'ASAP'}
+                      <div className="flex items-center gap-1.5 text-blue-600 font-mono text-[10px]">
+                        <span>Due:</span> {t.dueTime || 'Asap'}
                       </div>
                       <button 
                         onClick={() => moveTask(t)}
-                        className="text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-blue-600 transition-colors bg-slate-50 px-2 py-1 rounded border border-slate-100"
+                        className="text-[9px] text-slate-400 hover:text-blue-600 transition-colors bg-slate-50 px-2 py-1 rounded border border-slate-100"
                       >
-                        Transition →
+                        Update →
                       </button>
                     </div>
                   </div>
@@ -171,7 +171,7 @@ export default function NurseTasks() {
                 
                 {colTasks.length === 0 && (
                   <div className="h-full flex items-center justify-center border-2 border-dashed border-slate-100 rounded-xl p-10 text-center opacity-20">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No Active Tasks</span>
+                    <span className="text-[10px] text-slate-400">No active tasks</span>
                   </div>
                 )}
               </div>
@@ -180,8 +180,8 @@ export default function NurseTasks() {
         })}
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Initialize Clinical Protocol"
-        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Abort interface</Button><Button loading={saving} onClick={handleAdd}>Commit Task</Button></>}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Add task"
+        footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button loading={saving} onClick={handleAdd}>Save</Button></>}>
         <div className="space-y-4 py-2">
           <Combobox 
             label="Target Patient Identity" 

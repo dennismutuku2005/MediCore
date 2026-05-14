@@ -65,18 +65,18 @@ export default function PatientBilling() {
     <div className="animate-in fade-in duration-500">
       <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Financial Liability Protocol</div>
-          <div className="text-3xl font-black text-slate-900 tracking-tighter">KES {outstanding.toLocaleString()}</div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 italic">Outstanding clinical fees requiring settlement</p>
+          <div className="text-[10px] text-slate-400 mb-1">Financial liability protocol</div>
+          <div className="text-3xl font-medium text-slate-900 tracking-tighter">KES {outstanding.toLocaleString()}</div>
+          <p className="text-[10px] text-slate-400 mt-2">Outstanding clinical fees requiring settlement</p>
         </div>
         {outstanding > 0 && (
-          <Button className="h-12 px-10 text-[11px] font-black uppercase tracking-widest shadow-lg shadow-blue-100">Settle Entire Registry</Button>
+          <Button className="h-12 px-10 text-[11px] shadow-lg shadow-blue-100">Save</Button>
         )}
       </div>
 
       <div className="mb-6">
-        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Financial Chronology</h3>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Audit trail of clinical invoices and payment verification</p>
+        <h3 className="text-sm font-medium text-slate-800">Financial chronology</h3>
+        <p className="text-[10px] text-slate-400 mt-1">Audit trail of clinical invoices and payment verification</p>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
@@ -85,8 +85,8 @@ export default function PatientBilling() {
             <tr key={b.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 font-medium">
               <td className="px-5 py-4 text-sm font-mono text-slate-400">#{b.invoiceNumber || b.id}</td>
               <td className="px-5 py-4 text-sm text-slate-500">{b.date}</td>
-              <td className="px-5 py-4 text-sm font-black text-slate-800 uppercase tracking-tighter">{b.itemDescription}</td>
-              <td className="px-5 py-4 text-sm font-bold text-slate-900">KES {b.amount?.toLocaleString()}</td>
+              <td className="px-5 py-4 text-sm font-medium text-slate-800">{b.itemDescription}</td>
+              <td className="px-5 py-4 text-sm font-medium text-slate-900">KES {b.amount?.toLocaleString()}</td>
               <td className="px-5 py-4 text-sm"><Badge status={b.status} /></td>
               <td className="px-5 py-4 text-sm">
                 <div className="flex items-center gap-2">
@@ -94,13 +94,13 @@ export default function PatientBilling() {
                     <Button 
                       loading={processingId === b.id}
                       onClick={() => handlePay(b.id)}
-                      className="h-8 px-4 text-[10px] font-black uppercase tracking-widest"
+                      className="h-8 px-4 text-[10px]"
                     >
-                      Process Payment
+                      Update
                     </Button>
                   ) : (
-                    <Button variant="secondary" className="h-8 px-3 text-[10px] font-black uppercase tracking-widest gap-1.5 shadow-sm">
-                      <DownloadIcon size={12} /> RECEIPT
+                    <Button variant="secondary" className="h-8 px-3 text-[10px] gap-1.5 shadow-sm">
+                      <DownloadIcon size={12} /> Receipt
                     </Button>
                   )}
                 </div>
@@ -109,7 +109,7 @@ export default function PatientBilling() {
           ))}
         </Table>
         {bills.length === 0 && (
-          <div className="p-16 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+          <div className="p-16 text-center text-slate-400 text-[10px]">
             No financial protocols identified in your account
           </div>
         )}

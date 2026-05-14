@@ -56,22 +56,22 @@ export default function LabtechDashboard() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <StatCard icon={<FlaskIcon size={20} />} label="Total Diagnostic Volume" value={stats.totalVolume} trend="+12% yield" trendUp />
-        <StatCard icon={<HourglassIcon size={20} />} label="Pending Analysis" value={stats.pendingAnalysis} trend={`${urgentRequests.length} STAT pending`} trendUp={false} iconBg="#fffbeb" iconColor="#b45309" />
-        <StatCard icon={<CheckCircleIcon size={20} />} label="Verified Results" value={stats.verifiedResults} trend="+8 completed" trendUp iconBg="#ecfdf5" iconColor="#047857" />
-        <StatCard icon={<CrossMedicalIcon size={20} />} label="Reagent Inventory" value={stats.inventoryStatus} trend="No alerts" trendUp iconBg="#f0f9ff" iconColor="#0369a1" />
+        <StatCard icon={<FlaskIcon size={20} />} label="Total volume" value={stats.totalVolume} trend="+12% yield" trendUp />
+        <StatCard icon={<HourglassIcon size={20} />} label="Pending" value={stats.pendingAnalysis} trend={`${urgentRequests.length} STAT pending`} trendUp={false} iconBg="#fffbeb" iconColor="#b45309" />
+        <StatCard icon={<CheckCircleIcon size={20} />} label="Completed" value={stats.verifiedResults} trend="+8 completed" trendUp iconBg="#ecfdf5" iconColor="#047857" />
+        <StatCard icon={<CrossMedicalIcon size={20} />} label="Inventory" value={stats.inventoryStatus} trend="No alerts" trendUp iconBg="#f0f9ff" iconColor="#0369a1" />
       </div>
 
       <div className="bg-white border border-slate-200 rounded shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
-          <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">High-Urgency Diagnostic Queue</h3>
+          <h3 className="text-sm font-medium text-slate-800">Urgent queue</h3>
         </div>
         <Table headers={['Accession ID', 'Patient Identity', 'Protocol Type', 'Priority', 'Ordering Physician', 'Process Status']}>
           {queue.filter((t: any) => t.urgency === 'STAT').map((t: any) => (
             <tr key={t.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 font-medium">
               <td className="px-5 py-3 text-sm font-mono text-slate-400">#{t.id}</td>
-              <td className="px-5 py-3 text-sm font-bold text-slate-800">{t.patient}</td>
-              <td className="px-5 py-3 text-sm text-slate-800 font-black">{t.testType}</td>
+              <td className="px-5 py-3 text-sm font-medium text-slate-800">{t.patient}</td>
+              <td className="px-5 py-3 text-sm text-slate-800 font-medium">{t.testType}</td>
               <td className="px-5 py-3 text-sm"><Badge status={t.urgency} /></td>
               <td className="px-5 py-3 text-sm text-slate-600 font-bold">{t.doctor}</td>
               <td className="px-5 py-3 text-sm"><Badge status={t.status} /></td>
@@ -79,7 +79,7 @@ export default function LabtechDashboard() {
           ))}
         </Table>
         {queue.filter((t: any) => t.urgency === 'STAT').length === 0 && (
-          <div className="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+          <div className="p-10 text-center text-slate-400 text-[10px]">
             No STAT requests in queue
           </div>
         )}

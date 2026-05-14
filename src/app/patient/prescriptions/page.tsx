@@ -40,8 +40,8 @@ export default function PatientPrescriptions() {
   return (
     <div className="animate-in fade-in duration-500">
       <div className="mb-8">
-        <h2 className="text-xl font-black text-slate-800 tracking-tight">Pharmacological Registry</h2>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Active medications and prescription protocols</p>
+        <h2 className="text-xl font-medium text-slate-800">Pharmacological registry</h2>
+        <p className="text-[10px] text-slate-400 mt-1">Active medications and prescription protocols</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -56,22 +56,22 @@ export default function PatientPrescriptions() {
 
             <div className="space-y-3">
               <div className="flex flex-col">
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Dosage Protocol</span>
-                <span className="text-sm font-bold text-slate-700">{rx.dosage}</span>
+                <span className="text-[9px] text-slate-400">Dosage protocol</span>
+                <span className="text-sm font-medium text-slate-700">{rx.dosage}</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Temporal Frequency</span>
-                <span className="text-sm font-bold text-slate-700">{rx.frequency}</span>
+                <span className="text-[9px] text-slate-400">Temporal frequency</span>
+                <span className="text-sm font-medium text-slate-700">{rx.frequency}</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Clinical Instructions</span>
-                <span className="text-xs text-slate-500 italic font-medium leading-relaxed">{rx.instructions}</span>
+                <span className="text-[9px] text-slate-400">Clinical instructions</span>
+                <span className="text-xs text-slate-500 font-medium leading-relaxed">{rx.instructions}</span>
               </div>
             </div>
 
             <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between">
-              <div className="text-[10px] text-slate-400 font-bold">
-                DR. {rx.doctorName || rx.doctor || 'UNSPECIFIED'}
+              <div className="text-[10px] text-slate-400">
+                Dr. {rx.doctorName || rx.doctor || 'Unspecified'}
               </div>
               <div className="text-[10px] text-slate-300 font-mono italic">
                 {rx.startDate}
@@ -82,7 +82,7 @@ export default function PatientPrescriptions() {
         
         {meds.length === 0 && (
           <div className="col-span-full p-20 text-center bg-white border border-slate-200 border-dashed rounded-xl">
-            <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">No active pharmacological protocols found</div>
+            <div className="text-sm text-slate-400">No active pharmacological protocols found</div>
             <p className="text-xs text-slate-400 mt-2">Any prescribed medications will appear in this registry.</p>
           </div>
         )}

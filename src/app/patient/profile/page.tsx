@@ -48,29 +48,29 @@ export default function PatientProfile() {
           {(profile.name || 'P').split(' ').map((n: string) => n[0]).join('')}
         </div>
         <h2 className="text-xl font-black text-slate-800 tracking-tight">{profile.name}</h2>
-        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-[0.2em]">Patient Protocol #{profile.id}</p>
+        <p className="text-[10px] text-slate-400 mt-1">Patient protocol #{profile.id}</p>
         
         <div className="w-full h-px bg-slate-50 my-6" />
         
         <div className="w-full space-y-3 px-2">
-          <div className="flex justify-between text-[11px] font-bold uppercase tracking-wider">
+          <div className="flex justify-between text-[11px] font-medium">
             <span className="text-slate-400">Registry Date</span>
             <span className="text-slate-800">{new Date(profile.createdAt || Date.now()).toLocaleDateString()}</span>
           </div>
-          <div className="flex justify-between text-[11px] font-bold uppercase tracking-wider">
+          <div className="flex justify-between text-[11px] font-medium">
             <span className="text-slate-400">Clinical Status</span>
             <span className="text-emerald-600">Verified</span>
           </div>
         </div>
 
-        <Button variant="secondary" className="mt-8 w-full h-10 text-[10px] font-black uppercase tracking-widest">Update Avatar</Button>
+        <Button variant="secondary" className="mt-8 w-full h-10 text-[10px]">Update avatar</Button>
       </div>
       
       {/* Main Details Form */}
       <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm">
         <div className="mb-8 border-b border-slate-50 pb-5">
-          <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Demographic Identification</h3>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Core patient data for medical records</p>
+          <h3 className="text-sm font-medium text-slate-900">Demographic identification</h3>
+          <p className="text-[10px] text-slate-400 mt-1">Core patient data for medical records</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -83,8 +83,8 @@ export default function PatientProfile() {
         </div>
         
         <div className="mb-8 border-b border-slate-50 pb-5 pt-4">
-          <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Emergency & Contingency</h3>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Primary contact for urgent clinical scenarios</p>
+          <h3 className="text-sm font-medium text-slate-900">Emergency & contingency</h3>
+          <p className="text-[10px] text-slate-400 mt-1">Primary contact for urgent clinical scenarios</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -93,8 +93,8 @@ export default function PatientProfile() {
         </div>
 
         <div className="mb-8 border-b border-slate-50 pb-5 pt-4">
-          <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Financial & Coverage</h3>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Insurance carrier and policy metadata</p>
+          <h3 className="text-sm font-medium text-slate-900">Financial & coverage</h3>
+          <p className="text-[10px] text-slate-400 mt-1">Insurance carrier and policy metadata</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -103,8 +103,8 @@ export default function PatientProfile() {
         </div>
         
         <div className="flex items-center justify-end gap-3 mt-10 pt-6 border-t border-slate-50">
-          <Button variant="secondary" className="h-10 px-6 text-[11px] font-black uppercase tracking-widest">Discard Edits</Button>
-          <Button className="h-10 px-6 text-[11px] font-black uppercase tracking-widest">Commit Changes</Button>
+          <Button variant="secondary" className="h-10 px-6 text-[11px]">Cancel</Button>
+          <Button className="h-10 px-6 text-[11px]">Save</Button>
         </div>
       </div>
     </div>

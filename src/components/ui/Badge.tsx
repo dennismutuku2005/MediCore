@@ -19,7 +19,7 @@ export default function Badge({ status, children, className }: BadgeProps) {
   };
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border ${getColors(status)} uppercase tracking-wider ${className || ''}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${getColors(status)} ${className || ''}`}>
       {children || status}
     </span>
   );
