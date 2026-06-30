@@ -4,7 +4,7 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 import { PlusIcon } from '@/components/ui/Icons';
@@ -76,11 +76,7 @@ export default function PatientAppointments() {
     }
   };
 
-  if (loading) return (
-    <div className="space-y-4">
-      <SkeletonLoader height={120} count={3} className="rounded-lg" />
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="animate-in fade-in duration-500">

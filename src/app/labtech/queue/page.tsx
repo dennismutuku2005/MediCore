@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { apiFetch } from '@/lib/api';
 import { useRouter } from 'next/navigation';

@@ -5,7 +5,7 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import { PlusIcon, EyeIcon, TrashIcon, SearchIcon, EyeOffIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
@@ -15,9 +15,11 @@ export default function AdminPatients() {
   const [loading, setLoading] = useState(true);
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState<any>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState({ 
     id: '', 
     name: '', 
@@ -99,16 +101,24 @@ export default function AdminPatients() {
     setSelectedPatient(null);
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to remove this patient record? This will delete all associated medical history.')) {
-      try {
-        await apiFetch(`/patients?id=${id}`, { method: 'DELETE' });
-        setPatientsList(prev => prev.filter(p => p.id !== id));
-        setSelectedPatient(null);
-        toast.success("Patient record removed from master index");
-      } catch (error) {
-        toast.error("Failed to delete patient record.");
-      }
+  const handleOpenDelete = (patient: any) => {
+    setSelectedPatient(patient);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedPatient) return;
+    setDeleting(true);
+    try {
+      await apiFetch(`/patients?id=${selectedPatient.id}`, { method: 'DELETE' });
+      setPatientsList(prev => prev.filter(p => p.id !== selectedPatient.id));
+      setDeleteModalOpen(false);
+      setSelectedPatient(null);
+      toast.success("Patient record removed from master index");
+    } catch (error) {
+      toast.error("Failed to delete patient record.");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -147,17 +157,7 @@ export default function AdminPatients() {
     }
   };
 
-  if (loading) return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <SkeletonLoader width={250} height={36} />
-        <SkeletonLoader width={150} height={36} />
-      </div>
-      <div className="bg-white border border-slate-200 rounded p-5 space-y-3 shadow-sm">
-        <SkeletonLoader variant="row" count={8} />
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -273,7 +273,7 @@ export default function AdminPatients() {
 
             <div className="pt-6 border-t border-slate-50">
                <button 
-                onClick={() => handleDelete(selectedPatient.id)}
+                onClick={() => handleOpenDelete(selectedPatient)}
                 className="w-full h-11 border border-rose-200 text-rose-600 rounded-md font-bold hover:bg-rose-50 transition-colors flex items-center justify-center gap-2"
               >
                 <TrashIcon size={16} /> 
@@ -282,6 +282,14 @@ export default function AdminPatients() {
             </div>
           </div>
         )}
+      </Modal>
+
+      <Modal open={deleteModalOpen} onClose={() => { setDeleteModalOpen(false); setSelectedPatient(null); }} title="Confirm De-registration"
+        footer={<><Button variant="secondary" onClick={() => { setDeleteModalOpen(false); setSelectedPatient(null); }}>Cancel</Button><Button loading={deleting} onClick={handleDelete}>Delete Record</Button></>}> 
+        <div className="space-y-2 py-2">
+          <p className="text-sm text-slate-700">Delete this patient record and all associated medical history?</p>
+          <p className="text-sm font-bold text-slate-900">{selectedPatient?.name}</p>
+        </div>
       </Modal>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingPatient ? "Update Patient Profile" : "Register New Patient"}

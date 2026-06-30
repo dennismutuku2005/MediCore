@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { UploadIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
 import { apiFetch } from '@/lib/api';
@@ -58,12 +58,7 @@ export default function LabtechUpload() {
     }
   };
 
-  if (loading) return (
-    <div className="space-y-6">
-      <SkeletonLoader height={100} className="rounded-xl shadow-sm" />
-      <SkeletonLoader height={300} className="rounded-xl shadow-sm" />
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="form" />;
 
   if (!test && !loading) return (
     <div className="p-20 text-center bg-white border border-slate-200 rounded-xl shadow-sm">

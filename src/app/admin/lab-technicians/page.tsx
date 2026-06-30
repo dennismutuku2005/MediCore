@@ -6,8 +6,8 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
-import { SearchIcon, EditIcon, TrashIcon, PlusIcon } from '@/components/ui/Icons';
+import PageSkeleton from '@/components/ui/PageSkeleton';
+import { SearchIcon, EditIcon, TrashIcon, PlusIcon, EyeIcon } from '@/components/ui/Icons';
 import { apiFetch } from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -19,6 +19,11 @@ export default function AdminLabTechs() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ id: '', name: '', email: '', phone: '', username: '', password: '' });
   const [editingTech, setEditingTech] = useState<any>(null);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedTech, setSelectedTech] = useState<any>(null);
+  const [techToDelete, setTechToDelete] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -78,29 +83,33 @@ export default function AdminLabTechs() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to remove this lab technician?')) {
-      try {
-        await apiFetch(`/labtechs?id=${id}`, { method: 'DELETE' });
-        await fetchData();
-        toast.success("Staff record removed from registry");
-      } catch (error) {
-        toast.error("Failed to delete record.");
-      }
+  const handleOpenView = (tech: any) => {
+    setSelectedTech(tech);
+    setViewModalOpen(true);
+  };
+
+  const handleOpenDelete = (tech: any) => {
+    setTechToDelete(tech);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!techToDelete) return;
+    setDeleting(true);
+    try {
+      await apiFetch(`/labtechs?id=${techToDelete.id}`, { method: 'DELETE' });
+      await fetchData();
+      setDeleteModalOpen(false);
+      setTechToDelete(null);
+      toast.success("Staff record removed from registry");
+    } catch (error) {
+      toast.error("Failed to delete record.");
+    } finally {
+      setDeleting(false);
     }
   };
 
-  if (loading) return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <SkeletonLoader width={250} height={36} />
-        <SkeletonLoader width={150} height={36} />
-      </div>
-      <div className="bg-white border border-slate-200 rounded p-5 space-y-3 shadow-sm">
-        <SkeletonLoader variant="row" count={5} />
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -133,10 +142,13 @@ export default function AdminLabTechs() {
               <td className="px-5 py-3 text-sm"><Badge status={l.status || 'active'} /></td>
               <td className="px-5 py-3 text-sm">
                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-all" title="View Profile" onClick={() => handleOpenView(l)}>
+                    <EyeIcon size={16} />
+                  </button>
                   <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-all" title="Modify Profile" onClick={() => handleOpenEdit(l)}>
                     <EditIcon size={16} />
                   </button>
-                  <button className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-all" title="De-register Staff" onClick={() => handleDelete(l.id)}>
+                  <button className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-all" title="De-register Staff" onClick={() => handleOpenDelete(l)}>
                     <TrashIcon size={16} />
                   </button>
                 </div>
@@ -150,6 +162,36 @@ export default function AdminLabTechs() {
           </div>
         )}
       </div>
+
+      <Modal open={viewModalOpen} onClose={() => { setViewModalOpen(false); setSelectedTech(null); }} title="Laboratory Staff Details"
+        footer={<><Button variant="secondary" onClick={() => { setViewModalOpen(false); setSelectedTech(null); }}>Close</Button><Button onClick={() => { setViewModalOpen(false); handleOpenEdit(selectedTech); }}>Edit Profile</Button></>}> 
+        {selectedTech && (
+          <div className="space-y-4 py-2">
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Name</p>
+              <p className="text-sm font-bold text-slate-800 mt-1">{selectedTech.name}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Email</p>
+                <p className="text-sm font-bold text-slate-800 mt-1">{selectedTech.email || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Phone</p>
+                <p className="text-sm font-bold text-slate-800 mt-1">{selectedTech.phone || 'N/A'}</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      <Modal open={deleteModalOpen} onClose={() => { setDeleteModalOpen(false); setTechToDelete(null); }} title="Confirm Removal"
+        footer={<><Button variant="secondary" onClick={() => { setDeleteModalOpen(false); setTechToDelete(null); }}>Cancel</Button><Button loading={deleting} onClick={handleDelete}>Delete Record</Button></>}> 
+        <div className="space-y-2 py-2">
+          <p className="text-sm text-slate-700">Remove this laboratory staff member from the registry?</p>
+          <p className="text-sm font-bold text-slate-900">{techToDelete?.name}</p>
+        </div>
+      </Modal>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingTech ? "Modify Laboratory Profile" : "Register Diagnostic Staff"}
         footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button loading={saving} onClick={handleSave}>{editingTech ? "Update Profile" : "Confirm Enrollment"}</Button></>}>

@@ -5,7 +5,7 @@ import Table from '@/components/ui/Table';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import { DollarIcon, PatientsIcon, CheckCircleIcon, FlaskIcon, DownloadIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
@@ -55,14 +55,7 @@ export default function AdminReports() {
     }
   };
 
-  if (loading) return (
-    <div className="space-y-6 p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[1,2,3,4].map(i => <SkeletonLoader key={i} height={100} className="rounded shadow-sm" />)}
-      </div>
-      <SkeletonLoader height={400} className="rounded shadow-sm" />
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="dashboard" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">

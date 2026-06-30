@@ -4,7 +4,7 @@ import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 import { ClockIcon, EditIcon, CheckCircleIcon, CloseIcon, CalendarIcon } from '@/components/ui/Icons';
@@ -97,28 +97,7 @@ export default function DoctorAppointments() {
       ? appt.patient?.name || 'Unknown'
       : appt?.patient || 'Unknown';
 
-  if (loading) return (
-    <div className="space-y-6">
-      <div className="bg-white border border-slate-200 rounded p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-8">
-          <SkeletonLoader width={200} height={24} />
-          <SkeletonLoader width={80} height={24} />
-        </div>
-        <div className="space-y-4">
-          {[1,2,3,4,5].map(i => (
-            <div key={i} className="flex items-center gap-4 py-3 border-b border-slate-50 last:border-0">
-               <SkeletonLoader variant="circular" width={32} height={32} />
-               <div className="flex-1 space-y-2">
-                 <SkeletonLoader width="40%" height={16} />
-                 <SkeletonLoader width="20%" height={12} />
-               </div>
-               <SkeletonLoader width={60} height={24} />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">

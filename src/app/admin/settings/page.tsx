@@ -3,14 +3,22 @@ import React, { useState, useEffect } from 'react';
 import Input from '@/components/ui/Input';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { UploadIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
 import { apiFetch } from '@/lib/api';
+import authService from '@/lib/auth';
 
 export default function AdminSettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [accountUsername, setAccountUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [settings, setSettings] = useState<any>({
     hospitalName: '',
     address: '',
@@ -34,6 +42,9 @@ export default function AdminSettings() {
         setLoading(false);
       }
     }
+
+    const currentUser = authService.getUser();
+    setAccountUsername(currentUser?.username || '');
     fetchSettings();
   }, []);
 
@@ -54,17 +65,68 @@ export default function AdminSettings() {
     }
   };
 
+  const handleSendOtp = async () => {
+    const username = accountUsername || authService.getUser()?.username || '';
+    if (!username) {
+      toast.error('Please sign in again before requesting a password reset OTP');
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      const res = await apiFetch('/auth?action=forgot_password', {
+        method: 'POST',
+        body: JSON.stringify({ username })
+      });
+      if (res.status === 'success') {
+        setOtpSent(true);
+        toast.success('OTP link sent to your registered mobile number');
+      } else {
+        toast.error(res.message || 'Unable to send password reset OTP');
+      }
+    } catch (error) {
+      toast.error('Unable to initiate password reset');
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (!otp || !newPassword || !confirmPassword) {
+      toast.error('Please complete the OTP and password fields');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('New passwords do not match');
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      const res = await apiFetch('/auth?action=reset_password', {
+        method: 'POST',
+        body: JSON.stringify({ token: otp, password: newPassword })
+      });
+      if (res.status === 'success') {
+        setOtp('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setOtpSent(false);
+        toast.success('Password updated successfully');
+      } else {
+        toast.error(res.message || 'Password update failed');
+      }
+    } catch (error) {
+      toast.error('Password update failed');
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
   const toggle = (key: string) => {
     setSettings({ ...settings, [key]: !settings[key] });
   };
 
-  if (loading) return (
-    <div className="space-y-8 animate-pulse">
-      <SkeletonLoader height={250} className="rounded-xl" />
-      <SkeletonLoader height={150} className="rounded-xl" />
-      <SkeletonLoader height={200} className="rounded-xl" />
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="settings" />;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -100,6 +162,27 @@ export default function AdminSettings() {
           </div>
           <div className="pt-4 flex justify-end">
             <Button loading={saving} onClick={handleSave} className="h-10 px-8 text-[11px] font-black uppercase tracking-widest">Update Facility Configuration</Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm">
+        <div className="mb-6 border-b border-slate-50 pb-5">
+          <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Security & Access</h3>
+          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Change your account credentials with a time-limited OTP</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-5 space-y-4">
+            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Request Password Reset OTP</div>
+            <p className="text-sm text-slate-600">We will send a reset link to your registered mobile number. It expires in 1 hour.</p>
+            <Button loading={otpLoading} onClick={handleSendOtp} className="h-10 px-6 text-[10px] font-black uppercase tracking-widest">Send OTP</Button>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-4">
+            <Input label="OTP / Reset Token" value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="Enter the reset token" />
+            <Input label="New Password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New password" />
+            <Input label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm password" />
+            <Button loading={changingPassword} onClick={handleChangePassword} className="h-10 px-6 text-[10px] font-black uppercase tracking-widest">Change Password</Button>
           </div>
         </div>
       </div>

@@ -15,6 +15,11 @@ export default function Input({ label, error, icon, suffix, isTextarea, options,
   
   const isReadOnly = props.readOnly || (props.value !== undefined && !props.onChange);
   const safeProps = { ...props, readOnly: isReadOnly };
+  
+  // Ensure value is a string and not NaN
+  const safeValue = props.value === undefined || props.value === null || isNaN(Number(props.value)) 
+    ? '' 
+    : String(props.value);
 
   return (
     <div className="flex flex-col gap-1 w-full">
@@ -24,7 +29,7 @@ export default function Input({ label, error, icon, suffix, isTextarea, options,
         {icon && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">{icon}</span>}
         
         {options ? (
-          <select className={`${baseClasses} appearance-none pr-8`} {...(props as any)}>
+          <select className={`${baseClasses} appearance-none pr-8`} {...(props as any)} value={safeValue}>
             {options.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
           </select>
         ) : isTextarea ? (

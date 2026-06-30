@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import StatCard from '@/components/ui/StatCard';
 import BarChart from '@/components/charts/BarChart';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
 import { PersonIcon, CalendarIcon, BedIcon, ActivityIcon, TrendUpIcon } from '@/components/ui/Icons';
@@ -91,19 +91,7 @@ export default function AdminDashboard() {
     fetchCharts(timeRange);
   }, [timeRange, fetchCharts]);
 
-  if (loading) return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[1,2,3,4].map(i => <SkeletonLoader key={i} height={100} className="rounded shadow-sm" />)}
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2"><SkeletonLoader height={350} className="rounded shadow-sm" /></div>
-        <div className="space-y-6">
-          <SkeletonLoader height={350} className="rounded shadow-sm" />
-        </div>
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="dashboard" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">

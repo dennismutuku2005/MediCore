@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 
 export default function NurseActivity() {
@@ -36,16 +36,7 @@ export default function NurseActivity() {
     return acc;
   }, {});
 
-  if (loading) return (
-    <div className="space-y-8">
-      {[1,2].map(i => (
-        <div key={i} className="space-y-4">
-          <SkeletonLoader width={100} height={20} />
-          <SkeletonLoader height={60} count={3} className="rounded-lg" />
-        </div>
-      ))}
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="animate-in fade-in duration-500">

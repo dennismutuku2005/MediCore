@@ -6,6 +6,7 @@ import Input from '@/components/ui/Input';
 import { PersonIcon, LockIcon, EyeIcon, EyeOffIcon } from '@/components/ui/Icons';
 import Image from 'next/image';
 import authService, { roleRedirectPath } from '@/lib/auth';
+import { Toaster, toast } from 'sonner';
 
 export default function Login() {
   const router = useRouter();
@@ -21,39 +22,28 @@ export default function Login() {
     setError('');
 
     try {
-      // First attempt real API login
       const result = await authService.login(username, password);
       
       if (result.success && result.data) {
-        router.push(roleRedirectPath(result.data.user.role));
+        toast.success('Authentication successful', {
+          position: 'top-center'
+        });
+        setTimeout(() => {
+          router.push(roleRedirectPath(result.data.user.role));
+        }, 500);
       } else {
-        // Fallback for development/testing if API is not fully seeded
-        // This allows testing the UI even if the specific user isn't in the DB yet
-        const mockRoles: Record<string, string> = {
-          admin: 'admin',
-          doctor: 'doctor',
-          nurse: 'nurse',
-          patient: 'patient',
-          labtech: 'labtech'
-        };
-
-        const role = mockRoles[username.toLowerCase()];
-        if (role) {
-          authService.setToken('mock-token');
-          authService.setUser({
-            id: 0,
-            name: username.charAt(0).toUpperCase() + username.slice(1),
-            username: username,
-            role: role,
-            email: `${username}@medicore.com`
-          });
-          router.push(roleRedirectPath(role));
-        } else {
-          setError(result.message || 'Invalid clinical credentials. Please try again.');
-        }
+        const errorMsg = result.message || 'Invalid clinical credentials. Please try again.';
+        setError(errorMsg);
+        toast.error(errorMsg, {
+          position: 'top-center'
+        });
       }
     } catch (err) {
-      setError('System connectivity issue. Please ensure backend is online.');
+      const errorMsg = 'System connectivity issue. Please ensure backend is online.';
+      setError(errorMsg);
+      toast.error(errorMsg, {
+        position: 'top-center'
+      });
     } finally {
       setLoading(false);
     }
@@ -61,6 +51,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center p-5 font-sans">
+      <Toaster position="top-center" />
       <div className="w-full max-w-[400px] bg-white border border-slate-200 rounded p-10 shadow-sm animate-in fade-in zoom-in duration-300">
         <div className="flex flex-col items-center mb-10">
           <div className="flex items-center gap-3 mb-2">
@@ -100,12 +91,6 @@ export default function Login() {
             placeholder="••••••••"
           />
 
-          {error && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded text-xs font-bold text-rose-600 text-center animate-shake">
-              {error}
-            </div>
-          )}
-
           <div className="text-right">
             <a href="/forgot-password" className="text-xs font-medium text-blue-600 hover:underline">Forgot access key?</a>
           </div>
@@ -114,10 +99,6 @@ export default function Login() {
             Authenticate
           </Button>
         </form>
-
-        <div className="mt-10 p-4 bg-slate-50 rounded border border-slate-100 italic text-[11px] text-slate-400 text-center">
-          Available roles for testing: admin, doctor, nurse, patient, labtech
-        </div>
       </div>
     </div>
   );

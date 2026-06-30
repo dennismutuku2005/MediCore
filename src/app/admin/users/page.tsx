@@ -5,7 +5,7 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import { PersonIcon, EditIcon, TrashIcon, PlusIcon, SearchIcon, EyeIcon, EyeOffIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
@@ -15,10 +15,15 @@ export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [viewingUser, setViewingUser] = useState<any>(null);
   const [editingUser, setEditingUser] = useState<any>(null);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ id: '', name: '', username: '', password: '', email: '', role: 'NURSE', status: 'ACTIVE' });
+  const [deleting, setDeleting] = useState(false);
+  const [form, setForm] = useState({ id: '', name: '', username: '', password: '', email: '', phone: '', role: 'NURSE', status: 'active' });
 
   const fetchData = async () => {
     try {
@@ -44,7 +49,7 @@ export default function AdminUsers() {
 
   const handleOpenAdd = () => {
     setEditingUser(null);
-    setForm({ id: '', name: '', username: '', password: '', email: '', role: 'NURSE', status: 'ACTIVE' });
+    setForm({ id: '', name: '', username: '', password: '', email: '', phone: '', role: 'NURSE', status: 'ACTIVE' });
     setModalOpen(true);
   };
 
@@ -56,10 +61,21 @@ export default function AdminUsers() {
       username: user.username, 
       password: '', 
       email: user.email || '', 
+      phone: user.phone || '',
       role: user.role, 
-      status: user.status || 'ACTIVE' 
+      status: user.status || 'active' 
     });
     setModalOpen(true);
+  };
+
+  const handleOpenView = (user: any) => {
+    setViewingUser(user);
+    setViewModalOpen(true);
+  };
+
+  const handleOpenDelete = (user: any) => {
+    setUserToDelete(user);
+    setDeleteModalOpen(true);
   };
 
   const handleSave = async () => {
@@ -82,23 +98,26 @@ export default function AdminUsers() {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        await apiFetch(`/users?id=${id}`, { method: 'DELETE' });
+    setDeleting(true);
+    try {
+      const res = await apiFetch(`/users?id=${id}`, { method: 'DELETE' });
+      
+      if (res.status === 'error') {
+        toast.error(res.message || "Failed to delete user");
+      } else {
         await fetchData();
-        toast.success("User removed from system");
-      } catch (error) {
-        toast.error("Failed to delete user.");
+        setDeleteModalOpen(false);
+        setUserToDelete(null);
+        toast.success(res.message || "User removed from system");
       }
+    } catch (error) {
+      toast.error("Failed to delete user");
+    } finally {
+      setDeleting(false);
     }
   };
 
-  if (loading) return (
-    <div className="space-y-6">
-      <SkeletonLoader height={40} width={200} />
-      <SkeletonLoader height={400} className="rounded-xl shadow-sm" />
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -123,7 +142,7 @@ export default function AdminUsers() {
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
         <Table headers={['User', 'Username', 'Email', 'Role', 'Status', 'Actions']}>
           {filtered.map(u => (
-            <tr key={u.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 font-medium group">
+            <tr key={u.id} className="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 font-medium group cursor-pointer" onClick={() => handleOpenView(u)}>
               <td className="px-5 py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
@@ -135,13 +154,13 @@ export default function AdminUsers() {
               <td className="px-5 py-4 text-sm text-slate-600 font-mono">{u.username}</td>
               <td className="px-5 py-4 text-sm text-slate-500">{u.email || 'N/A'}</td>
               <td className="px-5 py-4 text-sm"><Badge status={u.role} /></td>
-              <td className="px-5 py-4 text-sm"><Badge status={u.status || 'ACTIVE'} /></td>
-              <td className="px-5 py-4 text-sm">
+              <td className="px-5 py-4 text-sm"><Badge status={u.status || 'active'} /></td>
+              <td className="px-5 py-4 text-sm" onClick={e => e.stopPropagation()}>
                 <div className="flex items-center gap-2">
-                  <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-all" onClick={() => handleOpenEdit(u)}>
+                  <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-all" onClick={() => handleOpenEdit(u)} title="Edit User">
                     <EditIcon size={16} />
                   </button>
-                  <button className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-all" onClick={() => handleDelete(u.id)}>
+                  <button className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-all" onClick={() => handleOpenDelete(u)} title="Delete User">
                     <TrashIcon size={16} />
                   </button>
                 </div>
@@ -159,9 +178,10 @@ export default function AdminUsers() {
             <Input label="Username" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} />
             <Input label="Email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
           </div>
+          <Input label="Phone" type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
           <div className="grid grid-cols-2 gap-4">
             <Input label="Role" options={[{value:'ADMIN',label:'Admin'},{value:'DOCTOR',label:'Doctor'},{value:'NURSE',label:'Nurse'},{value:'LABTECH',label:'Lab Tech'},{value:'PATIENT',label:'Patient'}]} value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} />
-            <Input label="Status" options={[{value:'ACTIVE',label:'Active'},{value:'INACTIVE',label:'Inactive'}]} value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
+            <Input label="Status" options={[{value:'active',label:'Active'},{value:'inactive',label:'Inactive'}]} value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
           </div>
           <Input 
             label="Password" 
@@ -180,6 +200,79 @@ export default function AdminUsers() {
             }
           />
         </div>
+      </Modal>
+
+      <Modal open={viewModalOpen} onClose={() => setViewModalOpen(false)} title="User Account Details"
+        footer={<><Button variant="secondary" onClick={() => setViewModalOpen(false)}>Close</Button><Button onClick={() => { setViewModalOpen(false); handleOpenEdit(viewingUser); }}>Edit User</Button></>}>
+        {viewingUser && (
+          <div className="space-y-4 py-4">
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Full Name</p>
+              <p className="text-sm font-bold text-slate-800 mt-1">{viewingUser.name}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Username</p>
+                <p className="text-sm font-mono text-slate-800 mt-1">{viewingUser.username}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Email</p>
+                <p className="text-sm text-slate-600 mt-1">{viewingUser.email || 'N/A'}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Phone</p>
+                <p className="text-sm text-slate-600 mt-1">{viewingUser.phone || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Role</p>
+                <p className="text-sm mt-1"><Badge status={viewingUser.role} /></p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Status</p>
+                <p className="text-sm mt-1"><Badge status={viewingUser.status || 'active'} /></p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Account Created</p>
+                <p className="text-sm text-slate-600 mt-1">{viewingUser.createdAt ? new Date(viewingUser.createdAt).toLocaleDateString() : 'N/A'}</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      <Modal open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title="Remove Medical Professional"
+        footer={<><Button variant="secondary" onClick={() => setDeleteModalOpen(false)}>Cancel</Button><Button variant="danger" loading={deleting} onClick={() => userToDelete && handleDelete(userToDelete.id)}>Confirm Removal</Button></>}>
+        {userToDelete && (
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg">
+              <p className="text-sm font-bold text-rose-900">Warning: This action cannot be undone</p>
+            </div>
+            <p className="text-sm text-slate-700">
+              Are you sure you want to remove <span className="font-bold text-slate-900">{userToDelete.name}</span> ({userToDelete.username}) from the system?
+            </p>
+            <div className="p-3 bg-slate-50 rounded border border-slate-200 space-y-2">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">User Information</p>
+              <div className="grid grid-cols-2 gap-4 text-xs">
+                <div>
+                  <p className="text-slate-400">Role</p>
+                  <p className="font-bold text-slate-800">{userToDelete.role}</p>
+                </div>
+                <div>
+                  <p className="text-slate-400">Status</p>
+                  <p className="font-bold text-slate-800">{userToDelete.status}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-slate-400">Email</p>
+                  <p className="font-bold text-slate-800">{userToDelete.email || 'N/A'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

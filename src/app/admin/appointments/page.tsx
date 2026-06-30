@@ -5,7 +5,7 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import PatientCombobox from '@/components/ui/PatientCombobox';
 import { apiFetch } from '@/lib/api';
 import { PlusIcon, SearchIcon, ClockIcon } from '@/components/ui/Icons';
@@ -92,15 +92,7 @@ export default function AdminAppointments() {
     (a.department || '').toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return (
-    <div className="space-y-6">
-      <SkeletonLoader height={40} />
-      <div className="bg-white border border-slate-200 rounded p-5 space-y-3 shadow-sm">
-        <SkeletonLoader height={24} width={200} />
-        <SkeletonLoader variant="row" count={6} />
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

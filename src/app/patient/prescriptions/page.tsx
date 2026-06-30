@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Badge from '@/components/ui/Badge';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 
@@ -31,11 +31,7 @@ export default function PatientPrescriptions() {
     fetchMeds();
   }, [user?.username]);
 
-  if (loading) return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[1,2,3].map(i => <SkeletonLoader key={i} height={180} className="rounded-xl" />)}
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="animate-in fade-in duration-500">

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 
@@ -32,12 +32,7 @@ export default function PatientProfile() {
     fetchProfile();
   }, [user?.username]);
 
-  if (loading || !profile) return (
-    <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
-      <SkeletonLoader height={350} className="rounded-xl" />
-      <SkeletonLoader height={600} className="rounded-xl" />
-    </div>
-  );
+  if (loading || !profile) return <PageSkeleton variant="form" />;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 animate-in fade-in duration-500">

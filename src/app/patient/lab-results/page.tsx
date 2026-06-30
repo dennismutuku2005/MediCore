@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Table from '@/components/ui/Table';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 import { DownloadIcon } from '@/components/ui/Icons';
@@ -34,11 +34,7 @@ export default function PatientLabResults() {
     fetchResults();
   }, [user?.username]);
 
-  if (loading) return (
-    <div className="space-y-3">
-      <SkeletonLoader height={52} count={5} className="rounded" />
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="animate-in fade-in duration-500">

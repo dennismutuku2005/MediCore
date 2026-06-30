@@ -1,12 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import StatCard from '@/components/ui/StatCard';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { PatientsIcon, CalendarIcon, ClipboardIcon, ActivityIcon, ClockIcon } from '@/components/ui/Icons';
+import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 
@@ -102,40 +103,7 @@ export default function DoctorDashboard() {
     setPatientFile(null);
   };
 
-  if (loading) return (
-    <div className="space-y-6">
-       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {[1,2,3,4].map(i => (
-          <div key={i} className="bg-white border border-slate-200 rounded p-5 shadow-sm space-y-3">
-             <div className="flex items-center justify-between">
-               <SkeletonLoader variant="circular" width={32} height={32} />
-               <SkeletonLoader width={60} height={16} />
-             </div>
-             <SkeletonLoader width="60%" height={24} />
-             <SkeletonLoader width="40%" height={12} />
-          </div>
-        ))}
-      </div>
-      <div className="bg-white border border-slate-200 rounded p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-8">
-          <SkeletonLoader width={200} height={24} />
-          <SkeletonLoader width={80} height={24} />
-        </div>
-        <div className="space-y-4">
-          {[1,2,3,4,5].map(i => (
-            <div key={i} className="flex items-center gap-4 py-3 border-b border-slate-50 last:border-0">
-               <SkeletonLoader variant="circular" width={40} height={40} />
-               <div className="flex-1 space-y-2">
-                 <SkeletonLoader width="30%" height={16} />
-                 <SkeletonLoader width="50%" height={12} />
-               </div>
-               <SkeletonLoader width={80} height={32} />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="dashboard" />;
 
   // patient is a nested object from the API
   const patientName = selectedApp?.patient?.name || 'Patient';

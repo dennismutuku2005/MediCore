@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import Modal from '@/components/ui/Modal';
+import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { EyeIcon, SearchIcon, FileTextIcon, CalendarIcon, PersonIcon, ActivityIcon } from '@/components/ui/Icons';
 
 export default function LabtechCompleted() {

@@ -5,6 +5,7 @@ import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import Modal from '@/components/ui/Modal';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import Button from '@/components/ui/Button';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
@@ -35,30 +36,7 @@ export default function DoctorPatients() {
 
   const selectedP = patientsList.find(p => p.id === selected);
 
-  if (loading) return (
-    <div className="space-y-6">
-      <div className="bg-white border border-slate-200 rounded p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-8">
-          <SkeletonLoader width={180} height={20} />
-          <SkeletonLoader width={80} height={20} />
-        </div>
-        <div className="space-y-4">
-          {[1,2,3,4,5,6,7,8].map(i => (
-            <div key={i} className="flex items-center gap-4 py-3 border-b border-slate-50 last:border-0">
-               <SkeletonLoader variant="circular" width={32} height={32} />
-               <div className="flex-1 space-y-2">
-                 <SkeletonLoader width="25%" height={16} />
-                 <SkeletonLoader width="15%" height={12} />
-               </div>
-               <SkeletonLoader width="20%" height={14} />
-               <SkeletonLoader width="15%" height={14} />
-               <SkeletonLoader width={70} height={24} />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

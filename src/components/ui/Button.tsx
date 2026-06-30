@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { Loader2 } from 'lucide-react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger';
@@ -25,11 +26,15 @@ export default function Button({
 
   return (
     <button 
-      className={`${base} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${loading ? 'opacity-70 pulse' : ''} ${className}`}
+      className={`${base} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
       disabled={loading || props.disabled}
       {...props}
     >
-      {children}
+      {loading ? (
+        <Loader2 size={18} className="animate-spin" />
+      ) : (
+        children
+      )}
     </button>
   );
 }

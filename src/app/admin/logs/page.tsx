@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import { 
   ClipboardIcon, SearchIcon, FilterIcon, LockIcon, MonitorIcon, 
@@ -50,12 +50,7 @@ export default function SystemLogs() {
     a.patientName?.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return (
-    <div className="space-y-4">
-      <SkeletonLoader height={40} />
-      <SkeletonLoader height={400} />
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">

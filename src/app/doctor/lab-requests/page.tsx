@@ -4,7 +4,7 @@ import Table from '@/components/ui/Table';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import PatientCombobox from '@/components/ui/PatientCombobox';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
@@ -76,28 +76,7 @@ export default function DoctorLabRequests() {
     }
   };
 
-  if (loading) return (
-    <div className="space-y-6">
-      <div className="flex justify-end"><SkeletonLoader width={180} height={40} /></div>
-      <div className="bg-white border border-slate-200 rounded p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-8">
-          <SkeletonLoader width={220} height={20} /><SkeletonLoader width={80} height={20} />
-        </div>
-        <div className="space-y-4">
-          {[1,2,3,4,5,6].map(i => (
-            <div key={i} className="flex items-center gap-6 py-4 border-b border-slate-50 last:border-0">
-              <div className="flex-1 space-y-2">
-                <SkeletonLoader width="50%" height={16} /><SkeletonLoader width="25%" height={12} />
-              </div>
-              <SkeletonLoader width="10%" height={24} />
-              <SkeletonLoader width="15%" height={12} />
-              <SkeletonLoader width="10%" height={24} />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

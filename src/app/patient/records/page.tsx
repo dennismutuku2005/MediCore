@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
 
@@ -32,19 +32,7 @@ export default function PatientRecords() {
     fetchNotes();
   }, [user?.username]);
 
-  if (loading) return (
-    <div className="space-y-6">
-      {[1,2,3].map(i => (
-        <div key={i} className="flex gap-4">
-          <SkeletonLoader height={16} width={16} className="rounded-full mt-1 shrink-0" />
-          <div className="space-y-2 flex-1">
-            <SkeletonLoader height={12} width={100} />
-            <SkeletonLoader height={80} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="flex flex-col gap-6 py-3 animate-in fade-in duration-500">

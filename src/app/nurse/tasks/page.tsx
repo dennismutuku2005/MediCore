@@ -4,7 +4,7 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { PlusIcon } from '@/components/ui/Icons';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
@@ -114,11 +114,7 @@ export default function NurseTasks() {
     }
   };
 
-  if (loading) return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
-      {[1,2,3].map(i => <SkeletonLoader key={i} height={500} className="rounded-xl shadow-sm" />)}
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="animate-in fade-in duration-500 space-y-8">

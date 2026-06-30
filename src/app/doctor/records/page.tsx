@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import Badge from '@/components/ui/Badge';
 import { SearchIcon } from '@/components/ui/Icons';
 import { apiFetch } from '@/lib/api';
@@ -34,23 +34,7 @@ export default function DoctorRecords() {
     (n.content || '').toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return (
-    <div className="space-y-6">
-       <SkeletonLoader width={350} height={40} className="rounded" />
-       <div className="space-y-4">
-        {[1,2,3,4].map(i => (
-          <div key={i} className="bg-white border border-slate-200 rounded p-6 shadow-sm space-y-4">
-            <div className="flex justify-between">
-              <SkeletonLoader width="30%" height={20} />
-              <SkeletonLoader width="15%" height={14} />
-            </div>
-            <SkeletonLoader height={60} />
-            <SkeletonLoader width="20%" height={12} />
-          </div>
-        ))}
-       </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

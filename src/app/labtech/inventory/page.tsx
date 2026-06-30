@@ -5,7 +5,7 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { PlusIcon, SearchIcon, TrashIcon, EditIcon, ActivityIcon } from '@/components/ui/Icons';
 import { apiFetch } from '@/lib/api';
 import { toast } from 'sonner';
@@ -17,8 +17,13 @@ export default function LabtechInventory() {
   const [items, setItems] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [itemToDelete, setItemToDelete] = useState<any>(null);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
 
   const fetchData = useCallback(async () => {
@@ -40,6 +45,8 @@ export default function LabtechInventory() {
 
   const openAdd = () => { setForm(EMPTY_FORM); setEditingItem(null); setModalOpen(true); };
   const openEdit = (item: any) => { setForm(item); setEditingItem(item); setModalOpen(true); };
+  const openView = (item: any) => { setSelectedItem(item); setViewModalOpen(true); };
+  const openDelete = (item: any) => { setItemToDelete(item); setDeleteModalOpen(true); };
 
   const handleSave = async () => {
     if (!form.name || form.quantity === undefined) {
@@ -64,15 +71,19 @@ export default function LabtechInventory() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm("Decommission this supply from the diagnostic matrix?")) {
-      try {
-        await apiFetch(`/labtech/inventory?id=${id}`, { method: 'DELETE' });
-        toast.success("Supply decommissioned");
-        await fetchData();
-      } catch (error) {
-        toast.error("Failed to remove item.");
-      }
+  const handleDelete = async () => {
+    if (!itemToDelete) return;
+    setDeleting(true);
+    try {
+      await apiFetch(`/labtech/inventory?id=${itemToDelete.id}`, { method: 'DELETE' });
+      toast.success("Supply decommissioned");
+      await fetchData();
+      setDeleteModalOpen(false);
+      setItemToDelete(null);
+    } catch (error) {
+      toast.error("Failed to remove item.");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -82,14 +93,7 @@ export default function LabtechInventory() {
     String(i.id).includes(search)
   );
 
-  if (loading) return (
-    <div className="space-y-6">
-      <div className="flex justify-between"><SkeletonLoader width={250} height={40} /><SkeletonLoader width={150} height={40} /></div>
-      <div className="bg-white border border-slate-200 rounded p-6 shadow-sm">
-        <SkeletonLoader variant="row" count={8} />
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="animate-in fade-in duration-500 space-y-6">
@@ -161,6 +165,13 @@ export default function LabtechInventory() {
               <td className="px-5 py-4">
                 <div className="flex items-center gap-2">
                   <button 
+                    onClick={() => openView(i)}
+                    className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all opacity-0 group-hover:opacity-100"
+                    title="View Protocol"
+                  >
+                    <ActivityIcon size={14} />
+                  </button>
+                  <button 
                     onClick={() => openEdit(i)}
                     className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all opacity-0 group-hover:opacity-100"
                     title="Edit Protocol"
@@ -168,7 +179,7 @@ export default function LabtechInventory() {
                     <EditIcon size={14} />
                   </button>
                   <button 
-                    onClick={() => handleDelete(i.id)}
+                    onClick={() => openDelete(i)}
                     className="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded transition-all opacity-0 group-hover:opacity-100"
                     title="Decommission"
                   >
@@ -185,6 +196,64 @@ export default function LabtechInventory() {
           </div>
         )}
       </div>
+
+      <Modal
+        open={viewModalOpen}
+        onClose={() => { setViewModalOpen(false); setSelectedItem(null); }}
+        title="Supply Details"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => { setViewModalOpen(false); setSelectedItem(null); }}>Close</Button>
+            <Button onClick={() => { setViewModalOpen(false); openEdit(selectedItem); }}>Edit Protocol</Button>
+          </>
+        }
+      >
+        {selectedItem && (
+          <div className="space-y-4 py-2">
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Supply Name</p>
+              <p className="text-sm font-bold text-slate-800 mt-1">{selectedItem.name}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Category</p>
+                <p className="text-sm font-bold text-slate-800 mt-1">{selectedItem.category}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Quantity</p>
+                <p className="text-sm font-bold text-slate-800 mt-1">{selectedItem.quantity} {selectedItem.unit}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Reorder Level</p>
+                <p className="text-sm font-bold text-slate-800 mt-1">{selectedItem.reorderLevel}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Status</p>
+                <p className="text-sm font-bold text-slate-800 mt-1">{selectedItem.status}</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      <Modal
+        open={deleteModalOpen}
+        onClose={() => { setDeleteModalOpen(false); setItemToDelete(null); }}
+        title="Confirm Decommission"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => { setDeleteModalOpen(false); setItemToDelete(null); }}>Cancel</Button>
+            <Button loading={deleting} onClick={handleDelete}>Delete Record</Button>
+          </>
+        }
+      >
+        <div className="space-y-2 py-2">
+          <p className="text-sm text-slate-700">Decommission this supply from the diagnostic matrix?</p>
+          <p className="text-sm font-bold text-slate-900">{itemToDelete?.name}</p>
+        </div>
+      </Modal>
 
       {/* Add/Edit Modal */}
       <Modal

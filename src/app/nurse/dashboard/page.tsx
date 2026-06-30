@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import StatCard from '@/components/ui/StatCard';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import Badge from '@/components/ui/Badge';
 import { BedIcon, PatientsIcon, ClipboardIcon, PillIcon } from '@/components/ui/Icons';

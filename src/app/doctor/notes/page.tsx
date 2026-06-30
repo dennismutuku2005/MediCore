@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { toast } from 'sonner';
 import { apiFetch } from '@/lib/api';
 import authService from '@/lib/auth';
@@ -81,30 +81,7 @@ export default function DoctorNotes() {
     }
   };
 
-  if (loading) return (
-    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 h-[calc(100vh-120px)] animate-in fade-in duration-300">
-      <div className="bg-white border border-slate-200 rounded p-4 space-y-4 shadow-sm">
-        <SkeletonLoader width="60%" height={20} />
-        {[1,2,3,4,5].map(i => <SkeletonLoader key={i} height={40} className="rounded" />)}
-      </div>
-      <div className="space-y-6 overflow-y-auto pr-2">
-        <div className="bg-white border border-slate-200 rounded p-6 space-y-4 shadow-sm">
-          <SkeletonLoader width="30%" height={16} />
-          <SkeletonLoader height={120} />
-          <div className="flex justify-end"><SkeletonLoader width={100} height={40} /></div>
-        </div>
-        {[1,2].map(i => (
-          <div key={i} className="bg-white border border-slate-200 rounded p-6 space-y-3 shadow-sm">
-            <div className="flex justify-between">
-              <SkeletonLoader width="40%" height={16} />
-              <SkeletonLoader width="20%" height={12} />
-            </div>
-            <SkeletonLoader height={60} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="form" />;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 h-[calc(100vh-120px)] animate-in fade-in duration-300">
@@ -135,7 +112,6 @@ export default function DoctorNotes() {
               <div className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">#{p.id} • {p.diagnosis || 'Observation'}</div>
             </div>
           ))}
-            ))}
           {patients.filter(p => p.name?.toLowerCase().includes(patientSearch.toLowerCase())).length === 0 && (
             <div className="p-8 text-center text-[10px] font-bold text-slate-300 uppercase tracking-widest">
               {patientSearch ? `No match for "${patientSearch}"` : 'No assigned patients'}

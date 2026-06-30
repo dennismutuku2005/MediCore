@@ -4,7 +4,7 @@ import Table from '@/components/ui/Table';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import LineChart from '@/components/charts/LineChart';
 import { toast } from 'sonner';
 import Badge from '@/components/ui/Badge';
@@ -60,12 +60,7 @@ export default function NurseVitals() {
     }
   };
 
-  if (loading) return (
-    <div className="space-y-6">
-      <SkeletonLoader height={300} className="rounded-xl shadow-sm" />
-      <SkeletonLoader height={250} className="rounded-xl shadow-sm" />
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="form" />;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

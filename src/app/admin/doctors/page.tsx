@@ -6,7 +6,7 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
-import SkeletonLoader from '@/components/ui/SkeletonLoader';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
 import { SearchIcon, EditIcon, TrashIcon, PlusIcon, EyeIcon, EyeOffIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
@@ -31,6 +31,11 @@ export default function AdminDoctors() {
   const [editingDoc, setEditingDoc] = useState<any>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [wards, setWards] = useState<any[]>([]);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
+  const [doctorToDelete, setDoctorToDelete] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchDoctors = async () => {
     try {
@@ -97,31 +102,35 @@ export default function AdminDoctors() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to remove this medical professional? This action cannot be undone.')) {
-      try {
-        await apiFetch(`/doctors?id=${id}`, { method: 'DELETE' });
-        setDoctorsList(prev => prev.filter(d => d.id !== id));
-        toast.success("Medical professional removed from staff registry");
-      } catch (error) {
-        toast.error("Failed to delete record.");
-      }
+  const handleOpenView = (doc: any) => {
+    setSelectedDoctor(doc);
+    setViewModalOpen(true);
+  };
+
+  const handleOpenDelete = (doc: any) => {
+    setDoctorToDelete(doc);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!doctorToDelete) return;
+    setDeleting(true);
+    try {
+      await apiFetch(`/doctors?id=${doctorToDelete.id}`, { method: 'DELETE' });
+      setDoctorsList(prev => prev.filter(d => d.id !== doctorToDelete.id));
+      setDeleteModalOpen(false);
+      setDoctorToDelete(null);
+      toast.success("Medical professional removed from staff registry");
+    } catch (error) {
+      toast.error("Failed to delete record.");
+    } finally {
+      setDeleting(false);
     }
   };
 
   const getInitials = (n: string) => (n || 'U').split(' ').map(w => w[0]).join('').slice(0, 2);
 
-  if (loading) return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <SkeletonLoader width={250} height={36} />
-        <SkeletonLoader width={150} height={36} />
-      </div>
-      <div className="bg-white border border-slate-200 rounded p-5 space-y-3 shadow-sm">
-        <SkeletonLoader variant="row" count={7} />
-      </div>
-    </div>
-  );
+  if (loading) return <PageSkeleton variant="list" />;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -155,10 +164,13 @@ export default function AdminDoctors() {
               <td className="px-5 py-3 text-sm"><Badge status={d.status || 'active'} /></td>
               <td className="px-5 py-3 text-sm">
                 <div className="flex items-center gap-2">
+                  <button className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors" title="View Professional" onClick={() => handleOpenView(d)}>
+                    <EyeIcon size={14} />
+                  </button>
                   <button className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors" title="Edit Professional" onClick={() => handleOpenEdit(d)}>
                     <EditIcon size={14} />
                   </button>
-                  <button className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors" title="Remove Record" onClick={() => handleDelete(d.id)}>
+                  <button className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors" title="Remove Record" onClick={() => handleOpenDelete(d)}>
                     <TrashIcon size={14} />
                   </button>
                 </div>
@@ -172,6 +184,46 @@ export default function AdminDoctors() {
           </div>
         )}
       </div>
+
+      <Modal open={viewModalOpen} onClose={() => { setViewModalOpen(false); setSelectedDoctor(null); }} title="Professional Details"
+        footer={<><Button variant="secondary" onClick={() => { setViewModalOpen(false); setSelectedDoctor(null); }}>Close</Button><Button onClick={() => { setViewModalOpen(false); handleOpenEdit(selectedDoctor); }}>Edit Profile</Button></>}> 
+        {selectedDoctor && (
+          <div className="space-y-4 py-2">
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Name</p>
+              <p className="text-sm font-bold text-slate-800 mt-1">{selectedDoctor.name}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Specialization</p>
+                <p className="text-sm font-bold text-slate-800 mt-1">{selectedDoctor.specialization || 'General'}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Phone</p>
+                <p className="text-sm font-bold text-slate-800 mt-1">{selectedDoctor.phone || 'N/A'}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Email</p>
+                <p className="text-sm font-bold text-slate-800 mt-1">{selectedDoctor.email || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Ward</p>
+                <p className="text-sm font-bold text-slate-800 mt-1">{selectedDoctor.ward?.name || 'Unassigned'}</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      <Modal open={deleteModalOpen} onClose={() => { setDeleteModalOpen(false); setDoctorToDelete(null); }} title="Confirm Removal"
+        footer={<><Button variant="secondary" onClick={() => { setDeleteModalOpen(false); setDoctorToDelete(null); }}>Cancel</Button><Button loading={deleting} onClick={handleDelete}>Delete Record</Button></>}> 
+        <div className="space-y-2 py-2">
+          <p className="text-sm text-slate-700">Remove this medical professional from the staff registry?</p>
+          <p className="text-sm font-bold text-slate-900">{doctorToDelete?.name}</p>
+        </div>
+      </Modal>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingDoc ? "Modify Practitioner Profile" : "Register New Practitioner"}
         footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button><Button loading={saving} onClick={handleSave}>{editingDoc ? "Update Medical Records" : "Register Clinician"}</Button></>}>
