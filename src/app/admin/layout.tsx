@@ -9,7 +9,6 @@ const pageTitles = {
   '/admin/lab-technicians': 'Lab Technicians',
   '/admin/appointments': 'Appointments',
   '/admin/wards': 'Wards & Beds',
-  '/admin/reports': 'Reports',
   '/admin/settings': 'Settings',
 };
 
