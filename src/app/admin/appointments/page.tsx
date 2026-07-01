@@ -77,6 +77,63 @@ export default function AdminAppointments() {
     }
   };
 
+  const openEdit = (appt: any) => {
+    setSelectedAppt(appt);
+    setEditForm({
+      doctorId: appt.doctorId ? String(appt.doctorId) : '',
+      date: appt.date || appt.appointmentDate || '',
+      time: appt.time || appt.appointmentTime || '',
+      reason: appt.reason || '',
+      department: appt.department || '',
+      status: appt.status || 'pending',
+    });
+  };
+
+  const closeEdit = () => {
+    setSelectedAppt(null);
+    setEditForm(EMPTY_EDIT_FORM);
+  };
+
+  const saveEdit = async () => {
+    if (!selectedAppt) return;
+    if (!editForm.date || !editForm.time) {
+      toast.error('Please enter both date and time before saving.');
+      return;
+    }
+
+    setEditSaving(true);
+    try {
+      const payload: any = {
+        reason: editForm.reason,
+        department: editForm.department,
+        status: editForm.status,
+        date: editForm.date,
+        time: editForm.time,
+      };
+      if (editForm.doctorId) {
+        payload.doctor = { id: Number(editForm.doctorId) };
+      }
+
+      const res = await apiFetch(`/appointments/${selectedAppt.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(payload),
+      });
+
+      if (res?.status === 'success') {
+        await fetchAll();
+        closeEdit();
+        toast.success('Appointment updated successfully.');
+      } else {
+        toast.error(res?.message || 'Failed to save appointment.');
+      }
+    } catch (error) {
+      console.error('Appointment save failed:', error);
+      toast.error('Failed to save appointment.');
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
   // Safe name resolution — AppointmentController returns patient as string
   const patientName = (a: any) =>
     typeof a.patient === 'object' ? a.patient?.name || '—' : a.patient || '—';
