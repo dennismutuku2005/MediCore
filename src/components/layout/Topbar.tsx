@@ -19,11 +19,6 @@ export default function Topbar({ pageTitle, username, onMenuToggle }: any) {
         </div>
 
         <button className="w-8 h-8 flex items-center justify-center border border-slate-200 rounded text-slate-500 hover:bg-slate-50 transition-colors"><MonitorIcon size={18} /></button>
-        <button className="w-8 h-8 flex items-center justify-center border border-slate-200 rounded text-slate-500 hover:bg-slate-50 transition-colors relative">
-          <BellIcon size={18} />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-rose-500 rounded-full border border-white"></span>
-        </button>
-        
         <div className="px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-[11px] font-extrabold text-slate-600 tracking-wider">
           {username.toUpperCase()}
         </div>

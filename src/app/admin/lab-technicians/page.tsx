@@ -141,7 +141,7 @@ export default function AdminLabTechs() {
               <td className="px-5 py-3 text-sm text-slate-500 font-mono">{l.phone}</td>
               <td className="px-5 py-3 text-sm"><Badge status={l.status || 'active'} /></td>
               <td className="px-5 py-3 text-sm">
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-2 transition-opacity">
                   <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-all" title="View Profile" onClick={() => handleOpenView(l)}>
                     <EyeIcon size={16} />
                   </button>

@@ -38,13 +38,21 @@ export async function apiFetch(endpoint, options = {}) {
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             const message = errorData.message || `API error: ${response.status}`;
-            console.error('[apiFetch]', endpoint, message);
-            throw new Error(message);
+            const apiError = new Error(message);
+            apiError.isApiFetchError = true;
+
+            if (response.status >= 500) {
+                console.error('[apiFetch]', endpoint, message);
+            }
+            throw apiError;
         }
 
         return await response.json();
     } catch (error) {
-        console.error('[apiFetch] Failed to reach API:', endpoint, error.message);
+        if (error instanceof Error && error.isApiFetchError) {
+            throw error;
+        }
+        console.error('[apiFetch] Failed to reach API:', endpoint, error instanceof Error ? error.message : error);
         throw error;
     }
 }

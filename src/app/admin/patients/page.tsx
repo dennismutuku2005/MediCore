@@ -7,7 +7,7 @@ import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
 import PageSkeleton from '@/components/ui/PageSkeleton';
 import { apiFetch } from '@/lib/api';
-import { PlusIcon, EyeIcon, TrashIcon, SearchIcon, EyeOffIcon } from '@/components/ui/Icons';
+import { PlusIcon, EyeIcon, TrashIcon, SearchIcon, EyeOffIcon, EditIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
 import Combobox from '@/components/ui/Combobox';
 
@@ -29,7 +29,6 @@ export default function AdminPatients() {
     gender: '', 
     contact: '', 
     email: '', 
-    address: '', 
     blood_type: '', 
     insurance: '',
     username: '',
@@ -69,7 +68,7 @@ export default function AdminPatients() {
     setEditingPatient(null);
     setForm({ 
       id: '', name: '', firstName: '', lastName: '', dob: '', 
-      gender: 'Male', contact: '', email: '', address: '', 
+      gender: 'Male', contact: '', email: '', 
       blood_type: 'O+', insurance: 'None', username: '', password: '', 
       wardId: '', doctorId: '', status: 'outpatient'
     });
@@ -88,7 +87,6 @@ export default function AdminPatients() {
       gender: patient.gender || 'Male', 
       contact: patient.contact || '', 
       email: patient.email || '',
-      address: patient.address || '',
       blood_type: patient.bloodType || 'O+',
       insurance: patient.insuranceProvider || 'None',
       username: patient.user?.username || '',
@@ -211,12 +209,22 @@ export default function AdminPatients() {
               <td className="px-5 py-3 text-sm text-slate-500 font-medium">{p.assignedDoctor?.name || '—'}</td>
               <td className="px-5 py-3"><Badge status={p.status}>{p.status}</Badge></td>
               <td className="px-5 py-3 text-right">
-                <button
-                  className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all opacity-0 group-hover:opacity-100"
-                  onClick={e => { e.stopPropagation(); setSelectedPatient(p); }}
-                >
-                  <EyeIcon size={14} />
-                </button>
+                <div className="flex items-center justify-end gap-2">
+                  <button
+                    className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-all"
+                    onClick={e => { e.stopPropagation(); setSelectedPatient(p); }}
+                    title="View Patient"
+                  >
+                    <EyeIcon size={14} />
+                  </button>
+                  <button
+                    className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-all"
+                    onClick={e => { e.stopPropagation(); handleOpenEdit(p); }}
+                    title="Edit Patient"
+                  >
+                    <EditIcon size={14} />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
@@ -307,7 +315,6 @@ export default function AdminPatients() {
             <Input label="Blood Type" options={[{value:'A+',label:'A+'},{value:'A-',label:'A-'},{value:'B+',label:'B+'},{value:'B-',label:'B-'},{value:'O+',label:'O+'},{value:'O-',label:'O-'},{value:'AB+',label:'AB+'},{value:'AB-',label:'AB-'}]} value={form.blood_type} onChange={e => setForm({ ...form, blood_type: e.target.value })} />
             <Input label="Emergency Contact" placeholder="+254..." value={form.contact} onChange={e => setForm({ ...form, contact: e.target.value })} />
           </div>
-          <Input label="Primary Residence" isTextarea placeholder="Full residential details..." value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} />
           
           <div className="pt-4 border-t border-slate-50">
             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Clinical Placement & Security</h4>

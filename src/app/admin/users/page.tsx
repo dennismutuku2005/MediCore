@@ -79,6 +79,11 @@ export default function AdminUsers() {
   };
 
   const handleSave = async () => {
+    if (!editingUser && (!form.phone || !form.password)) {
+      toast.error("Phone number and password are required to send login details to the new user.");
+      return;
+    }
+
     setSaving(true);
     try {
       const res = await apiFetch('/users', {

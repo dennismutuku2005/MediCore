@@ -152,7 +152,7 @@ export default function AdminNurses() {
               <td className="px-5 py-3 text-sm"><Badge status={n.shift} /></td>
               <td className="px-5 py-3 text-sm"><Badge status={n.status || 'active'} /></td>
               <td className="px-5 py-3 text-sm">
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-2 transition-opacity">
                   <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-all" title="View Record" onClick={() => handleOpenView(n)}>
                     <EyeIcon size={16} />
                   </button>

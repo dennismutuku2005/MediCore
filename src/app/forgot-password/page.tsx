@@ -31,7 +31,8 @@ export default function ForgotPassword() {
         setError(res.message || 'Verification failed. User not recognized.');
       }
     } catch (err) {
-      setError('System connectivity issue. Please try again later.');
+      const message = err instanceof Error ? err.message : 'System connectivity issue. Please try again later.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -68,7 +69,7 @@ export default function ForgotPassword() {
               )}
 
               <Button fullWidth loading={loading} className="h-11">
-                Dispatch Reset Token
+                Send Reset Link
               </Button>
 
               <div className="text-center pt-2">

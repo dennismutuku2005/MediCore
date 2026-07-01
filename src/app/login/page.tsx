@@ -96,7 +96,7 @@ export default function Login() {
           </div>
 
           <Button fullWidth loading={loading} className="h-10 text-base">
-            Authenticate
+            Login
           </Button>
         </form>
       </div>

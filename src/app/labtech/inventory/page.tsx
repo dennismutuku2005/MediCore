@@ -166,21 +166,21 @@ export default function LabtechInventory() {
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => openView(i)}
-                    className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all opacity-0 group-hover:opacity-100"
+                    className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all"
                     title="View Protocol"
                   >
                     <ActivityIcon size={14} />
                   </button>
                   <button 
                     onClick={() => openEdit(i)}
-                    className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all opacity-0 group-hover:opacity-100"
+                    className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all"
                     title="Edit Protocol"
                   >
                     <EditIcon size={14} />
                   </button>
                   <button 
                     onClick={() => openDelete(i)}
-                    className="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded transition-all opacity-0 group-hover:opacity-100"
+                    className="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded transition-all"
                     title="Decommission"
                   >
                     <TrashIcon size={14} />

@@ -52,7 +52,8 @@ export default function ResetPassword() {
         setError(res.message || 'Token verification failed or expired.');
       }
     } catch (err) {
-      setError('System connectivity issue. Please ensure backend is online.');
+      const message = err instanceof Error ? err.message : 'System connectivity issue. Please ensure backend is online.';
+      setError(message);
     } finally {
       setLoading(false);
     }

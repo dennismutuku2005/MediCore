@@ -22,6 +22,7 @@ export default function AdminDashboard() {
   const [appointments, setAppointments] = useState([]);
   const [timeRange, setTimeRange] = useState(30);
   const [fetchingCharts, setFetchingCharts] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     async function fetchData() {
@@ -73,6 +74,11 @@ export default function AdminDashboard() {
     }).catch(console.error);
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const fetchCharts = useCallback(async (days: number) => {
     setFetchingCharts(true);
     try {
@@ -103,7 +109,7 @@ export default function AdminDashboard() {
         </div>
         <div className="flex items-center gap-2 bg-slate-100/50 px-3 py-1.5 rounded border border-slate-200">
           <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-          <span className="text-[11px] font-medium text-slate-500">Live: {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          <span className="text-[11px] font-medium text-slate-500">Live: {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
         </div>
       </div>
 
@@ -179,7 +185,6 @@ export default function AdminDashboard() {
                 <h3 className="text-sm font-semibold text-slate-800">Scheduled appointments</h3>
                 <p className="text-slate-400 text-[11px] font-medium mt-0.5">Daily clinical queue</p>
             </div>
-            <Badge status="info">LIVE FEED</Badge>
         </div>
         <div className="overflow-x-auto">
           <Table headers={['ID', 'Patient Name', 'Assigned Doctor', 'Department', 'Scheduled Time', 'Status']}>

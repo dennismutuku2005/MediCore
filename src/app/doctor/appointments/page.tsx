@@ -137,7 +137,7 @@ export default function DoctorAppointments() {
               <td className="px-6 py-4"><Badge status={a.status} /></td>
               <td className="px-6 py-4 text-right">
                 <button
-                  className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all opacity-0 group-hover:opacity-100"
+                  className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all"
                   onClick={e => { e.stopPropagation(); setSelected(a); openEdit(a); }}
                   title="Edit appointment"
                 >
