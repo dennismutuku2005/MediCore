@@ -8,11 +8,12 @@ import Input from '@/components/ui/Input';
 import PageSkeleton from '@/components/ui/PageSkeleton';
 import PatientCombobox from '@/components/ui/PatientCombobox';
 import { apiFetch } from '@/lib/api';
-import { PlusIcon, SearchIcon, ClockIcon } from '@/components/ui/Icons';
+import { PlusIcon, SearchIcon, ClockIcon, EditIcon } from '@/components/ui/Icons';
 import { toast } from 'sonner';
 import Combobox from '@/components/ui/Combobox';
 
 const EMPTY_FORM = { patientId: '', patientName: '', doctorId: '', date: '', time: '', reason: '', department: '' };
+const EMPTY_EDIT_FORM = { doctorId: '', date: '', time: '', reason: '', department: '', status: 'pending' };
 
 export default function AdminAppointments() {
   const [loading, setLoading]     = useState(true);
@@ -23,6 +24,9 @@ export default function AdminAppointments() {
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving]       = useState(false);
   const [form, setForm]           = useState(EMPTY_FORM);
+  const [selectedAppt, setSelectedAppt] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState(EMPTY_EDIT_FORM);
+  const [editSaving, setEditSaving] = useState(false);
 
   const fetchAll = useCallback(async () => {
     try {
@@ -154,6 +158,13 @@ export default function AdminAppointments() {
                     <div className="text-xs font-bold text-slate-800 leading-tight truncate">{patientName(a)}</div>
                     <div className="text-[9px] text-slate-400 font-bold mt-1 uppercase truncate">{doctorName(a)}</div>
                     <div className="mt-1.5"><Badge status={a.status} /></div>
+                    <button
+                      className="mt-3 w-full inline-flex items-center justify-center gap-2 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-blue-600 border border-blue-100 rounded hover:bg-blue-50 transition"
+                      onClick={() => openEdit(a)}
+                    >
+                      <EditIcon size={12} />
+                      Edit
+                    </button>
                   </div>
                 ))}
                 {appts.filter(a => (a.date || a.appointmentDate) === weekDates[i]).length === 0 && (
@@ -177,7 +188,7 @@ export default function AdminAppointments() {
             </div>
             <Badge status="active">LIVE</Badge>
           </div>
-          <Table headers={['Patient', 'Doctor', 'Department', 'Date', 'Time', 'Status']}>
+          <Table headers={['Patient', 'Doctor', 'Department', 'Date', 'Time', 'Status', 'Actions']}>
             {filtered.map(a => (
               <tr key={a.id} className="hover:bg-slate-50 border-b border-slate-100 last:border-0 font-medium transition-colors">
                 <td className="px-5 py-3">
@@ -198,6 +209,15 @@ export default function AdminAppointments() {
                   </div>
                 </td>
                 <td className="px-5 py-3"><Badge status={a.status} /></td>
+                <td className="px-5 py-3 text-right">
+                  <button
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded border border-slate-200 bg-slate-50 text-slate-700 hover:bg-white hover:border-blue-200 hover:text-blue-700 transition"
+                    onClick={() => openEdit(a)}
+                  >
+                    <EditIcon size={14} />
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em]">Edit</span>
+                  </button>
+                </td>
               </tr>
             ))}
           </Table>
@@ -269,6 +289,87 @@ export default function AdminAppointments() {
               onChange={e => setForm(f => ({ ...f, reason: e.target.value }))} />
           </div>
 
+        </div>
+      </Modal>
+
+      <Modal
+        open={!!selectedAppt}
+        onClose={closeEdit}
+        title={selectedAppt ? `Edit Appointment — ${patientName(selectedAppt)}` : 'Edit Appointment'}
+        footer={
+          <>
+            <Button variant="secondary" onClick={closeEdit} disabled={editSaving}>Cancel</Button>
+            <Button onClick={saveEdit} disabled={editSaving}>{editSaving ? 'Saving...' : 'Save Changes'}</Button>
+          </>
+        }
+      >
+        <div className="space-y-4 py-2">
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Assigned Doctor</label>
+              <select
+                className="w-full h-10 px-3 border border-slate-200 rounded text-sm bg-slate-50 focus:bg-white focus:border-blue-600 outline-none transition"
+                value={editForm.doctorId}
+                onChange={e => setEditForm(f => ({ ...f, doctorId: e.target.value }))}
+              >
+                <option value="">{selectedAppt?.doctor ? `Keep current: ${doctorName(selectedAppt)}` : 'Select physician...'}</option>
+                {doctorsList.map(d => (
+                  <option key={d.id} value={d.id}>{d.name} {d.specialization ? `— ${d.specialization}` : ''}</option>
+                ))}
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Date</label>
+                <input
+                  type="date"
+                  className="w-full h-10 px-3 border border-slate-200 rounded text-sm bg-slate-50 focus:bg-white focus:border-blue-600 outline-none transition"
+                  value={editForm.date}
+                  onChange={e => setEditForm(f => ({ ...f, date: e.target.value }))}
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Time</label>
+                <input
+                  type="time"
+                  className="w-full h-10 px-3 border border-slate-200 rounded text-sm bg-slate-50 focus:bg-white focus:border-blue-600 outline-none transition"
+                  value={editForm.time}
+                  onChange={e => setEditForm(f => ({ ...f, time: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Department</label>
+              <input
+                className="w-full h-10 px-3 border border-slate-200 rounded text-sm bg-slate-50 focus:bg-white focus:border-blue-600 outline-none transition"
+                value={editForm.department}
+                onChange={e => setEditForm(f => ({ ...f, department: e.target.value }))}
+                placeholder="e.g. General, Cardiology..."
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Clinical Indication</label>
+              <textarea
+                className="w-full min-h-[80px] px-3 py-2 border border-slate-200 rounded text-sm bg-slate-50 focus:bg-white focus:border-blue-600 outline-none transition resize-none"
+                value={editForm.reason}
+                onChange={e => setEditForm(f => ({ ...f, reason: e.target.value }))}
+                placeholder="Reason for clinical encounter..."
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Status</label>
+              <select
+                className="w-full h-10 px-3 border border-slate-200 rounded text-sm bg-slate-50 focus:bg-white focus:border-blue-600 outline-none transition"
+                value={editForm.status}
+                onChange={e => setEditForm(f => ({ ...f, status: e.target.value }))}
+              >
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
         </div>
       </Modal>
     </div>
